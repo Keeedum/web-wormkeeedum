@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 สมัครสมาชิก — Keeedum AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+
+    <div class="login-logo">📝</div>
+    <div class="login-title">สมัครสมาชิก</div>
+    <div class="login-sub">สร้างบัญชีใหม่เพื่อใช้งาน</div>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="login-error">⚠ <%= error %></div>
+    <% } %>
+
+    <%
+      const f = (typeof form !== 'undefined' && form) ? form : {};
+    %>
+
+    <form method="POST" action="/register" autocomplete="off" class="login-form">
+
+      <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+
+      <label for="username" class="login-label">ชื่อผู้ใช้</label>
+      <input type="text" id="username" name="username"
+             placeholder="อย่างน้อย 3 ตัวอักษร" autofocus required
+             minlength="3" maxlength="32" class="login-input"
+             value="<%= f.username || '' %>">
+
+      <label for="email" class="login-label" style="margin-top:14px;">อีเมล</label>
+      <input type="email" id="email" name="email"
+             placeholder="you@example.com" required
+             autocomplete="email" maxlength="254" class="login-input"
+             value="<%= f.email || '' %>">
+
+      <label for="password" class="login-label" style="margin-top:14px;">รหัสผ่าน</label>
+      <input type="password" id="password" name="password"
+             placeholder="อย่างน้อย 6 ตัวอักษร" required
+             minlength="6" maxlength="128" autocomplete="new-password"
+             class="login-input">
+
+      <label for="password2" class="login-label" style="margin-top:14px;">ยืนยันรหัสผ่าน</label>
+      <input type="password" id="password2" name="password2"
+             placeholder="พิมพ์รหัสผ่านอีกครั้ง" required
+             minlength="6" maxlength="128" autocomplete="new-password"
+             class="login-input">
+
+      <button type="submit" class="login-btn">สมัครสมาชิก ➤</button>
+
+    </form>
+
+    <div class="login-footer" style="border-top:none; padding-top:8px;">
+      มีบัญชีแล้ว? <a href="/login">เข้าสู่ระบบ</a>
+    </div>
+
+    <div class="login-footer">
+      🛡 รหัสผ่านถูก hash ด้วย PBKDF2-SHA256
+    </div>
+
+  </div>
+
+</body>
+</html>

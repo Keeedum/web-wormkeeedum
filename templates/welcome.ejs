@@ -1,0 +1,245 @@
+<!-- language: EJS, file: templates/welcome.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+
+<title><%= (typeof app_title !== 'undefined' && app_title) ? app_title : 'Keeedum AI' %> — AI ตอบไทย สร้าง/แก้โค้ดได้</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="<%= (typeof app_title !== 'undefined' && app_title) ? app_title : 'Keeedum AI' %> — AI ตอบไทย สร้าง/แก้โค้ดได้">
+<meta property="og:description" content="AI ตอบไทยล้วน · สร้าง/แก้โค้ดได้ · หลายโมเดล · เขียนไฟล์อัตโนมัติ">
+<meta property="og:image" content="/static/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="th_TH">
+<meta property="og:site_name" content="<%= (typeof app_title !== 'undefined' && app_title) ? app_title : 'Keeedum AI' %>">
+<meta property="og:url" content="<%= (typeof app_url !== 'undefined' && app_url) ? app_url : '' %>/welcome">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= (typeof app_title !== 'undefined' && app_title) ? app_title : 'Keeedum AI' %>">
+<meta name="twitter:description" content="AI ตอบไทย สร้าง/แก้โค้ดได้">
+<meta name="twitter:image" content="/static/og-image.png">
+</head>
+<body class="buy-page">
+
+<div class="buy-wrap" style="max-width:960px;">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="buy-current verify-big" style="padding:40px 24px 56px;text-align:center;overflow:hidden;">
+
+    <!-- Hero SVG illustration -->
+    <div style="max-width:480px;margin:0 auto 20px;">
+      <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+        <defs>
+          <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#fbbf24"/>
+          </linearGradient>
+          <linearGradient id="bgj" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1d222e"/>
+            <stop offset="100%" stop-color="#0f1117"/>
+          </linearGradient>
+        </defs>
+
+        <!-- จอ chat -->
+        <rect x="40" y="40" width="320" height="200" fill="url(#bgj)" stroke="#3a4152" stroke-width="3"/>
+
+        <!-- header bar -->
+        <rect x="40" y="40" width="320" height="30" fill="#161a23" stroke="#3a4152" stroke-width="3"/>
+        <circle cx="55" cy="55" r="5" fill="#ef4444"/>
+        <circle cx="70" cy="55" r="5" fill="#f59e0b"/>
+        <circle cx="85" cy="55" r="5" fill="#10b981"/>
+
+        <!-- user message -->
+        <rect x="200" y="90" width="140" height="30" fill="#2563eb" stroke="#0a3fa0" stroke-width="2"/>
+        <rect x="215" y="100" width="100" height="4" fill="#ffffff" opacity="0.7"/>
+        <rect x="215" y="108" width="80" height="4" fill="#ffffff" opacity="0.5"/>
+
+        <!-- AI message -->
+        <rect x="60" y="135" width="180" height="40" fill="#1f2937" stroke="#3a4152" stroke-width="2"/>
+        <rect x="75" y="145" width="140" height="4" fill="#10b981" opacity="0.8"/>
+        <rect x="75" y="154" width="120" height="4" fill="#e5e7eb" opacity="0.6"/>
+        <rect x="75" y="163" width="100" height="4" fill="#e5e7eb" opacity="0.4"/>
+
+        <!-- input bar -->
+        <rect x="60" y="190" width="240" height="30" fill="#0b0e14" stroke="#3a4152" stroke-width="2"/>
+        <rect x="310" y="190" width="30" height="30" fill="url(#acc)" stroke="#000" stroke-width="2"/>
+
+        <!-- lightning -->
+        <path d="M340 15 L320 60 L345 60 L325 105 L365 55 L340 55 L355 15 Z"
+              fill="url(#acc)" stroke="#000" stroke-width="2" stroke-linejoin="miter"/>
+      </svg>
+    </div>
+
+    <h1 class="login-title" style="font-size:38px;letter-spacing:4px;margin:12px 0 8px;">
+      <%= ((typeof app_title !== 'undefined' && app_title) ? app_title : 'KEEEDUM AI').toUpperCase() %>
+    </h1>
+
+    <p class="login-sub" style="font-size:14px;letter-spacing:2px;">
+      AI ตอบไทยล้วน · สร้าง/แก้โค้ดได้ · หลายโมเดล
+    </p>
+
+    <!-- Stats -->
+    <% if (typeof stats !== 'undefined' && stats) { %>
+    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:28px;">
+      <div style="text-align:center;min-width:70px;">
+        <div style="font-size:26px;font-weight:900;color:var(--accent);"><%= stats.users || 0 %></div>
+        <div style="font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;">ผู้ใช้</div>
+      </div>
+      <div style="text-align:center;min-width:70px;">
+        <div style="font-size:26px;font-weight:900;color:var(--accent);"><%= stats.packages || 0 %></div>
+        <div style="font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;">แพ็กเกจ</div>
+      </div>
+      <div style="text-align:center;min-width:70px;">
+        <div style="font-size:26px;font-weight:900;color:var(--accent);"><%= stats.uptime_hours || 0 %></div>
+        <div style="font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;">ชม. ออนไลน์</div>
+      </div>
+      <div style="text-align:center;min-width:70px;">
+        <div style="font-size:26px;font-weight:900;color:var(--accent);"><%= stats.version || '1.0.0' %></div>
+        <div style="font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;">เวอร์ชัน</div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- CTA -->
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;">
+      <a href="/login" class="buy-submit" style="max-width:200px;margin:0;text-decoration:none;display:inline-block;">
+        🔐 เข้าสู่ระบบ
+      </a>
+      <% if (typeof allow_register !== 'undefined' && allow_register) { %>
+      <a href="/register" class="buy-status-link" style="padding:14px 32px;font-size:13px;">
+        ✨ สมัครใหม่ — ฟรี
+      </a>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FEATURES
+       ═══════════════════════════════════════════════════════════ -->
+  <h2 class="buy-section">// ทำอะไรได้บ้าง</h2>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:24px;">
+    <% if (typeof features !== 'undefined' && Array.isArray(features) && features.length) {
+         features.forEach(function (f) { %>
+      <div class="buy-pay-box" style="margin:0;">
+        <div style="font-size:32px;margin-bottom:8px;"><%= f.icon || '⭐' %></div>
+        <div style="font-weight:900;font-size:14px;color:var(--accent);margin-bottom:6px;letter-spacing:1px;">
+          <%= f.title %>
+        </div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.7;">
+          <%= f.desc %>
+        </div>
+      </div>
+    <% });
+       } else { %>
+      <div class="buy-empty">ยังไม่มีข้อมูล features</div>
+    <% } %>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HOW TO USE
+       ═══════════════════════════════════════════════════════════ -->
+  <h2 class="buy-section">// วิธีใช้งาน <%= (typeof steps !== 'undefined' && steps.length) ? steps.length : 4 %> ขั้นตอน</h2>
+
+  <div class="buy-history" style="padding:0 20px;">
+    <% if (typeof steps !== 'undefined' && Array.isArray(steps) && steps.length) {
+         steps.forEach(function (s, i) { %>
+      <div class="buy-history-item" style="padding:20px 0;<%= i === steps.length - 1 ? 'border-bottom:none;' : '' %>">
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="
+            width:44px;height:44px;flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--accent);color:#000;
+            font-weight:900;font-size:20px;
+            border:2px solid #000;
+          "><%= i + 1 %></div>
+          <div style="flex:1;">
+            <div style="font-weight:900;font-size:15px;margin-bottom:6px;color:var(--text);">
+              <%= s.icon || '' %> <%= s.title %>
+            </div>
+            <div style="font-size:13px;color:var(--dim);line-height:1.8;">
+              <% if (Array.isArray(s.lines)) {
+                   s.lines.forEach(function (line, li) { %>
+                    <%= line %><% if (li < s.lines.length - 1) { %><br><% } %>
+              <%   });
+                 } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% });
+       } else { %>
+      <div class="buy-history-item">
+        <div class="buy-empty">ยังไม่มีข้อมูลขั้นตอน</div>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       EXAMPLES
+       ═══════════════════════════════════════════════════════════ -->
+  <h2 class="buy-section">// ตัวอย่างคำสั่ง</h2>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;">
+    <% if (typeof examples !== 'undefined' && Array.isArray(examples) && examples.length) {
+         examples.forEach(function (ex) { %>
+      <div class="buy-note" style="margin:0;border-left-color:<%= ex.color || 'var(--accent)' %>;">
+        <div style="font-weight:900;color:<%= ex.color || 'var(--accent)' %>;font-size:12px;margin-bottom:6px;letter-spacing:1px;">
+          <%= ex.icon || '' %> <%= ex.title %>
+        </div>
+        <div style="font-size:13px;line-height:1.8;color:var(--text);">
+          <% if (Array.isArray(ex.items)) {
+               ex.items.forEach(function (item, ii) { %>
+                • <%= item %><% if (ii < ex.items.length - 1) { %><br><% } %>
+          <%   });
+             } %>
+        </div>
+      </div>
+    <% });
+       } else { %>
+      <div class="buy-empty">ยังไม่มีตัวอย่าง</div>
+    <% } %>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CTA BOTTOM
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="buy-current verify-big" style="margin-top:32px;text-align:center;">
+    <div style="font-size:42px;margin-bottom:12px;">🚀</div>
+    <div style="font-size:18px;font-weight:900;margin-bottom:16px;letter-spacing:1px;">
+      พร้อมเริ่มแล้วหรือยัง?
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <% if (typeof allow_register !== 'undefined' && allow_register) { %>
+      <a href="/register" class="buy-submit" style="max-width:220px;margin:0;text-decoration:none;display:inline-block;">
+        ✨ สมัครเลย — ฟรี
+      </a>
+      <% } %>
+      <a href="/login" class="buy-status-link" style="padding:14px 32px;font-size:13px;">
+        🔐 มีบัญชีแล้ว
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ -->
+  <footer style="text-align:center;margin-top:40px;padding-top:24px;border-top:2px solid var(--border-hard);color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;">
+    ⚡ <%= (typeof app_title !== 'undefined' && app_title) ? app_title : 'Keeedum AI' %>
+    · <%= new Date().getFullYear() %>
+    · AI ตอบไทยล้วน
+  </footer>
+
+</div>
+
+</body>
+</html>

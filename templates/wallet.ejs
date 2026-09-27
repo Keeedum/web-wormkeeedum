@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💰 กระเป๋าเงิน — Keeedum AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+
+  <div class="buy-wrap">
+
+    <header class="buy-header">
+      <a href="/" class="buy-back">⬅ กลับหน้าหลัก</a>
+      <h1 class="login-title">💰 กระเป๋าเงิน</h1>
+      <a href="/status" class="buy-status-link">⏱ สถานะ</a>
+    </header>
+
+    <!-- ยอดเงิน -->
+    <div class="buy-current buy-current-big">
+      <div class="buy-current-label">ยอดเงินคงเหลือ</div>
+      <div class="buy-current-time" id="balance">฿0.00</div>
+      <div class="buy-current-exp" id="balanceSub">-</div>
+      <div style="margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <a href="/buy" class="buy-status-link">🛒 ซื้อแพ็กเกจ</a>
+        <button class="buy-status-link" onclick="openExchange()">💱 แลกเป็นวันใช้งาน</button>
+      </div>
+    </div>
+
+    <!-- เติมเงิน -->
+    <h2 class="buy-section">🎁 เติมเงินด้วยซองอั่งเปา TrueMoney</h2>
+
+    <div class="buy-note">
+      ℹ️ <strong>วิธีใช้:</strong>
+      <ul>
+        <li>เปิดแอป TrueMoney → เปิดซองอั่งเปา → คัดลอกลิงก์</li>
+        <li>วางลิงก์ในช่องด้านล่าง → กด <strong>รับเงิน</strong></li>
+        <li>ระบบจะรับเงินเข้าบัญชีทันที (ไม่เกิน 5 วิ)</li>
+        <li>1 ซองใช้ได้ครั้งเดียว — ซ้ำไม่ได้</li>
+      </ul>
+    </div>
+
+    <div class="buy-upload">
+      <input type="text" id="giftLink" class="gift-input"
+             style="margin-bottom:14px;"
+             placeholder="https://gift.truemoney.com/campaign/?v=xxxxxxxxx">
+      <button class="buy-upload-btn" id="redeemBtn" onclick="redeemGift()">
+        🎁 รับเงิน
+      </button>
+      <div id="redeemResult" style="margin-top:14px; font-size:13px;"></div>
+    </div>
+
+    <!-- ประวัติ -->
+    <h2 class="buy-section">📜 ประวัติการเติมเงิน</h2>
+    <div class="buy-history" id="topupHistory">กำลังโหลด...</div>
+
+  </div>
+
+  <!-- EXCHANGE MODAL -->
+  <div class="modal-bg" id="exchangeModal">
+    <div class="modal">
+      <h3>💱 แลกเงินเป็นวันใช้งาน</h3>
+      <p style="font-size:12px; color:var(--dim); margin-bottom:14px;">
+        อัตรา: <strong style="color:var(--accent);">10 บาท = 1 วัน</strong>
+      </p>
+
+      <div class="buy-pay-row" style="border-bottom:none;">
+        <span>💰 ยอดเงินคงเหลือ</span>
+        <strong id="exBalance">฿0.00</strong>
+      </div>
+      <div class="buy-pay-row" style="border-bottom:none;">
+        <span>📅 แลกได้สูงสุด</span>
+        <strong id="exMax">0 วัน</strong>
+      </div>
+
+      <label class="login-label" style="margin-top:14px;">จำนวนวันที่ต้องการแลก</label>
+      <input type="number" id="exDays" min="1" value="1"
+             class="login-input" style="margin-bottom:14px;">
+
+      <div class="buy-pay-row" style="border-top:2px solid var(--border-hard); padding-top:14px;">
+        <span>💸 ใช้เงิน</span>
+        <strong id="exCost">฿10.00</strong>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button class="btn-ghost" onclick="closeExchange()">ยกเลิก</button>
+        <button class="btn-primary" onclick="doExchange()">💱 แลกเลย</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    window.CSRF_TOKEN = "<%= csrf_token %>";
+  </script>
+
+  <script>
+  let currentBalance = 0;
+  const RATE = 10; // 10 บาท / 1 วัน
+
+  function getCsrf() { return window.CSRF_TOKEN || ''; }
+
+  function showToast(msg, type = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = type === 'err' ? 'var(--bad)' : 'var(--ok)';
+    t.style.color = type === 'err' ? '#fff' : '#000';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function fmtBaht(n) { return '฿' + Number(n || 0).toFixed(2); }
+
+  function fmtDate(ts) {
+    const d = new Date(ts * 1000);
+    const p = n => String(n).padStart(2, '0');
+    return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  // ─── WALLET ──────────────────────────────────────────
+  async function loadWallet() {
+    try {
+      const r = await fetch('/api/wallet');
+      const d = await r.json();
+      if (!d.ok) return;
+
+      currentBalance = d.balance;
+      document.getElementById('balance').textContent = fmtBaht(d.balance);
+
+      const days = Math.floor(d.balance / RATE);
+      document.getElementById('balanceSub').textContent =
+        `แลกได้ ${days} วัน · เติมรวม ${fmtBaht(d.total_topup)}`;
+    } catch (e) {}
+  }
+
+  // ─── REDEEM ──────────────────────────────────────────
+  async function redeemGift() {
+    const link = document.getElementById('giftLink').value.trim();
+    const btn = document.getElementById('redeemBtn');
+    const result = document.getElementById('redeemResult');
+
+    if (!link) return showToast('⚠️ ใส่ลิงก์อั่งเปาก่อน', 'err');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังรับเงิน...';
+    result.innerHTML = '';
+
+    try {
+      const csrf = getCsrf();
+      const r = await fetch('/api/wallet/redeem', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-Token': csrf},
+        body: JSON.stringify({ link, _csrf: csrf }),
+      });
+      const d = await r.json();
+
+      if (d.ok) {
+        showToast('✅ ' + d.message);
+        result.innerHTML = `<div style="color:var(--ok); font-weight:900;">
+          ✅ ${escapeHtml(d.message)} — ยอดใหม่ ${fmtBaht(d.balance)}
+        </div>`;
+        document.getElementById('giftLink').value = '';
+        loadWallet();
+        loadHistory();
+      } else {
+        showToast('❌ ' + (d.message || 'ล้มเหลว'), 'err');
+        result.innerHTML = `<div style="color:var(--bad); font-weight:900;">
+          ❌ ${escapeHtml(d.message || 'ล้มเหลว')}
+        </div>`;
+      }
+    } catch (e) {
+      showToast('❌ เกิดข้อผิดพลาด', 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🎁 รับเงิน';
+    }
+  }
+
+  // ─── HISTORY ─────────────────────────────────────────
+  async function loadHistory() {
+    try {
+      const r = await fetch('/api/wallet/history');
+      const d = await r.json();
+      const list = document.getElementById('topupHistory');
+      if (!d.items || !d.items.length) {
+        list.innerHTML = '<div class="buy-empty">ยังไม่มีประวัติ</div>';
+        return;
+      }
+      list.innerHTML = d.items.map(t => {
+        const statusMap = {
+          success: ['✅ สำเร็จ', 'approved'],
+          failed:  ['❌ ล้มเหลว', 'rejected'],
+          pending: ['⏳ รอดำเนินการ', 'pending'],
+        };
+        const [txt, cls] = statusMap[t.status] || [t.status, 'pending'];
+        return `
+          <div class="buy-history-item">
+            <div class="buy-history-main">
+              <span class="buy-history-pkg">🎁 ซองอั่งเปา</span>
+              <span class="buy-history-price">${fmtBaht(t.amount)}</span>
+            </div>
+            <div class="buy-history-meta">
+              <span>${fmtDate(t.created_at)}</span>
+              <span class="buy-history-status buy-history-${cls}">${txt}</span>
+            </div>
+            ${t.error_msg ? `<div class="buy-history-note">💬 ${escapeHtml(t.error_msg)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    } catch (e) {}
+  }
+
+  // ─── EXCHANGE ────────────────────────────────────────
+  function openExchange() {
+    const maxDays = Math.floor(currentBalance / RATE);
+    document.getElementById('exBalance').textContent = fmtBaht(currentBalance);
+    document.getElementById('exMax').textContent = maxDays + ' วัน';
+
+    const input = document.getElementById('exDays');
+    input.max = maxDays;
+    input.value = Math.min(1, maxDays);
+    input.oninput = updateExCost;
+    updateExCost();
+
+    document.getElementById('exchangeModal').classList.add('show');
+  }
+
+  function closeExchange() {
+    document.getElementById('exchangeModal').classList.remove('show');
+  }
+
+  function updateExCost() {
+    const days = parseInt(document.getElementById('exDays').value) || 0;
+    document.getElementById('exCost').textContent = fmtBaht(days * RATE);
+  }
+
+  async function doExchange() {
+    const days = parseInt(document.getElementById('exDays').value) || 0;
+    if (days < 1) return showToast('⚠️ ต้องแลกอย่างน้อย 1 วัน', 'err');
+
+    if (!confirm(`แลก ${days} วัน ใช้เงิน ${fmtBaht(days * RATE)}?`)) return;
+
+    try {
+      const csrf = getCsrf();
+      const r = await fetch('/api/wallet/exchange', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-Token': csrf},
+        body: JSON.stringify({ days, _csrf: csrf }),
+      });
+      const d = await r.json();
+
+      if (d.ok) {
+        showToast('✅ ' + d.message);
+        closeExchange();
+        loadWallet();
+      } else {
+        showToast('❌ ' + (d.error || 'ล้มเหลว'), 'err');
+      }
+    } catch (e) {
+      showToast('❌ เกิดข้อผิดพลาด', 'err');
+    }
+  }
+
+  // ─── INIT ────────────────────────────────────────────
+  loadWallet();
+  loadHistory();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!-- language: EJS, file: templates/verify.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ยืนยันอีเมล — Keeedum AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+<div class="buy-wrap verify-wrap">
+
+  <div class="buy-current verify-big">
+    <div class="verify-icon"><%= ok ? '✅' : '❌' %></div>
+    <div class="buy-current-label">EMAIL VERIFICATION</div>
+    <h1 class="login-title" style="margin:14px 0;font-size:24px;">
+      <%= ok ? 'ยืนยันสำเร็จ' : 'ยืนยันไม่สำเร็จ' %>
+    </h1>
+    <div class="<%= ok ? 'login-success' : 'login-error' %>" style="margin-top:16px;">
+      <%= message %>
+    </div>
+  </div>
+
+  <div class="buy-pay-box" style="text-align:center;">
+    <% if (ok) { %>
+      <p style="color:var(--dim);font-size:13px;line-height:1.7;margin:0 0 16px;">
+        บัญชี <strong style="color:var(--accent);">
+          <%= username || 'ของคุณ' %>
+        </strong> พร้อมใช้งานแล้ว
+      </p>
+      <a href="/login?verified=1" class="buy-submit"
+         style="text-decoration:none;display:inline-block;">
+        🔐 เข้าสู่ระบบ
+      </a>
+    <% } else { %>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <a href="/login" class="buy-submit" style="text-decoration:none;margin:0;">
+          ไปหน้า Login
+        </a>
+        <% if (username) { %>
+          <a href="/verify-pending" class="buy-status-link"
+             style="display:block;padding:12px;">
+            📮 ขอลิงก์ใหม่
+          </a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ★ AUTO REDIRECT เมื่อยืนยันสำเร็จ — แสดง 3 วิ แล้วเปลี่ยนหน้า
+     ═══════════════════════════════════════════════════════════ -->
+<% if (ok) { %>
+
+  <!-- progress bar ด้านบน -->
+  <div style="
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--bg);
+    z-index: 99;
+  ">
+    <div id="progressBar" style="
+      height: 100%;
+      width: 0%;
+      background: var(--ok);
+      transition: width 3s linear;
+    "></div>
+  </div>
+
+  <!-- กล่องแจ้งเตือนล่างกลาง -->
+  <div id="redirectInfo" style="
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card);
+    border: 2px solid var(--ok);
+    padding: 14px 24px;
+    font-size: 13px;
+    color: var(--text);
+    box-shadow: 5px 5px 0 #000;
+    z-index: 100;
+    text-align: center;
+    min-width: 280px;
+    max-width: 92vw;
+    animation: slide-up .3s ease;
+  ">
+    <div style="font-weight: 900; color: var(--ok); margin-bottom: 6px;">
+      ✅ ยืนยันสำเร็จ
+    </div>
+    <div>
+      กำลังพาไปหน้าเข้าใช้งานในอีก
+      <strong id="cdSec" style="color: var(--accent); font-size: 18px;">3</strong>
+      วินาที...
+    </div>
+    <div style="margin-top: 10px;">
+      <a href="/login?verified=1"
+         style="color: var(--accent); font-weight: 900; font-size: 12px; text-decoration: none;">
+        ไปเลยตอนนี้ →
+      </a>
+    </div>
+  </div>
+
+  <style>
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @media (max-width: 480px) {
+      #redirectInfo {
+        min-width: 0 !important;
+        width: calc(100% - 32px) !important;
+        font-size: 12px !important;
+      }
+    }
+  </style>
+
+  <script>
+  (function autoRedirect() {
+    const SECONDS = 3;
+    let left = SECONDS;
+
+    const cdEl = document.getElementById('cdSec');
+    const barEl = document.getElementById('progressBar');
+
+    // เริ่มแอนิเมชัน progress bar
+    requestAnimationFrame(function () {
+      if (barEl) barEl.style.width = '100%';
+    });
+
+    // ★ ถ้ามี session อยู่แล้ว → ไปหน้า / ทันที
+    //   ถ้าไม่มี → ไปหน้า /login?verified=1
+    let target = '/login?verified=1';
+
+    fetch('/api/me', { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.logged_in) {
+          target = '/';
+          console.log('[verify] session ยังอยู่ — จะไปหน้า /');
+        } else {
+          console.log('[verify] ไม่มี session — จะไปหน้า /login?verified=1');
+        }
+      })
+      .catch(function () {});
+
+    // นับถอยหลัง + redirect
+    const iv = setInterval(function () {
+      left--;
+      if (cdEl) cdEl.textContent = String(Math.max(0, left));
+
+      if (left <= 0) {
+        clearInterval(iv);
+        window.location.replace(target);
+      }
+    }, 1000);
+
+    console.log('[verify] จะ redirect ใน', SECONDS, 'วินาที');
+  })();
+  </script>
+
+<% } else { %>
+
+  <style>
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+  </style>
+
+<% } %>
+
+</body>
+</html>

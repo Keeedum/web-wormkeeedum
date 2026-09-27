@@ -1,0 +1,250 @@
+<!-- language: EJS, file: templates/verify-pending.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ยืนยันอีเมล — Keeedum AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+<div class="buy-wrap verify-wrap">
+
+  <header class="buy-header">
+    <a href="/" class="buy-back">⬅ กลับ</a>
+    <h1 class="login-title">📧 ยืนยันอีเมล</h1>
+    <a href="/logout" class="buy-logout">ออก</a>
+  </header>
+
+  <div class="buy-current verify-big">
+    <div class="verify-icon">📬</div>
+    <div class="buy-current-label">VERIFY EMAIL</div>
+    <div class="verify-email">
+      ส่งลิงก์ยืนยันไปที่<br>
+      <strong><%= email || 'อีเมลของคุณ' %></strong>
+    </div>
+    <div class="verify-hint">
+      เปิดกล่องจดหมาย → คลิกลิงก์ → กลับมา login<br>
+      ถ้าไม่เจอ ตรวจใน Spam / Junk ด้วย
+    </div>
+  </div>
+
+  <div class="buy-pay-box">
+    <button class="buy-submit" id="resendBtn" onclick="doResend()" type="button">
+      📮 ส่งอีเมลอีกครั้ง
+    </button>
+    <div id="msg" class="verify-msg"></div>
+  </div>
+
+  <div class="verify-note">
+    <strong>หมายเหตุ:</strong> ถ้าอีเมลผิดหรือต้องการเปลี่ยน
+    <a href="/logout">ออกจากระบบ</a>
+    แล้วสมัครใหม่
+  </div>
+
+</div>
+
+<!-- ค่าจาก server ส่งผ่าน data-attribute -->
+<div id="server-config"
+     data-csrf="<%= csrf_token %>"
+     data-cooldown="<%= cooldown %>"
+     data-username="<%= username || '' %>"
+     hidden></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// Setup
+// ═══════════════════════════════════════════════════════════
+const $ = (id) => document.getElementById(id);
+const cfg = $('server-config');
+const CSRF = cfg.dataset.csrf || '';
+const COOLDOWN = parseInt(cfg.dataset.cooldown || '60', 10);
+const USERNAME = cfg.dataset.username || '';
+let cooldownUntil = 0;
+let sending = false;      // ★ กันกดซ้ำ
+
+// ═══════════════════════════════════════════════════════════
+// UI helpers
+// ═══════════════════════════════════════════════════════════
+function showToast(m, err) {
+  const t = $('toast');
+  if (!t) return;
+  t.textContent = m;
+  t.style.background = err ? 'var(--bad)' : 'var(--ok)';
+  t.style.color = err ? '#fff' : '#000';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function setMsg(text, err) {
+  const el = $('msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'verify-msg ' + (err ? 'err' : 'ok');
+}
+
+function tick() {
+  const btn = $('resendBtn');
+  if (!btn) return;
+
+  // ★ กำลังส่ง → แสดง "..."
+  if (sending) {
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังส่ง...';
+    return;
+  }
+
+  const left = Math.ceil((cooldownUntil - Date.now()) / 1000);
+  if (left > 0) {
+    btn.disabled = true;
+    btn.textContent = `⏳ รออีก ${left} วินาที`;
+  } else {
+    btn.disabled = false;
+    btn.textContent = '📮 ส่งอีเมลอีกครั้ง';
+  }
+}
+
+// ★ เก็บ time ที่ auto-send ครั้งล่าสุด (key ตาม username)
+function autoSentKey() {
+  return 'verify_autosent_' + USERNAME;
+}
+function getLastAutoSent() {
+  try { return Number(sessionStorage.getItem(autoSentKey()) || 0); }
+  catch (_) { return 0; }
+}
+function setLastAutoSent(ts) {
+  try { sessionStorage.setItem(autoSentKey(), String(ts)); }
+  catch (_) {}
+}
+
+// ═══════════════════════════════════════════════════════════
+// Resend
+// ═══════════════════════════════════════════════════════════
+async function doResend() {
+  // ★ ถ้ากำลังส่งอยู่ / ติด cooldown → ไม่ทำอะไร
+  if (sending) return;
+  if (Date.now() < cooldownUntil) return;
+
+  const btn = $('resendBtn');
+
+  sending = true;
+  tick();                    // อัปเดตปุ่มเป็น "กำลังส่ง..."
+  setMsg('กำลังส่ง...', false);
+
+  try {
+    const r = await fetch('/api/verify/resend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': CSRF,
+        'Accept': 'application/json',
+      },
+      credentials: 'same-origin',
+      redirect: 'manual',      // ★ ห้าม browser ตาม redirect
+      body: JSON.stringify({ _csrf: CSRF }),
+    });
+
+    // ★ อ่านเป็น text ก่อน — กันกรณี server ส่ง HTML
+    const raw = await r.text();
+    let d = {};
+    try {
+      d = JSON.parse(raw);
+    } catch (_) {
+      console.error('[resend] server ไม่ได้คืน JSON:', raw.slice(0, 200));
+      setMsg(`ผิดพลาด HTTP ${r.status} — server ตอบไม่ถูกต้อง`, true);
+      sending = false;
+      tick();
+      return;
+    }
+
+    // ★ กรณีสำเร็จ
+    if (r.ok && d.ok) {
+      if (d.already) {
+        setMsg('✓ อีเมลนี้ยืนยันแล้ว', false);
+      } else {
+        setMsg('✓ ' + (d.message || 'ส่งอีเมลแล้ว'), false);
+        showToast('📮 ส่งอีเมลแล้ว', false);
+      }
+      // ใช้ cooldown ที่ server ส่งกลับ (ถ้ามี) หรือ COOLDOWN default
+      cooldownUntil = Date.now() + (d.cooldown || COOLDOWN) * 1000;
+      setLastAutoSent(Date.now());
+      sending = false;
+      tick();
+      return;
+    }
+
+    // ★ ติด cooldown — ใช้เวลาจริงจาก server
+    if (d.error === 'COOLDOWN' && d.wait_sec) {
+      setMsg(d.message || `รออีก ${d.wait_sec} วินาที`, true);
+      cooldownUntil = Date.now() + Number(d.wait_sec) * 1000;
+      sending = false;
+      tick();
+      return;
+    }
+
+    // ★ โควต้าต่อวันเต็ม
+    if (d.error === 'DAILY_LIMIT') {
+      setMsg(d.message || 'ส่งครบโควต้าวันนี้แล้ว', true);
+      // disable ค้างไว้จนถึงเที่ยงคืน — แต่ UI ไม่รู้เวลาจริง → disable 1 ชม.
+      cooldownUntil = Date.now() + 60 * 60 * 1000;
+      sending = false;
+      tick();
+      return;
+    }
+
+    // ★ error อื่น
+    setMsg(d.message || d.error || `HTTP ${r.status}`, true);
+    sending = false;
+    tick();
+  } catch (e) {
+    console.error('[resend] fetch error:', e);
+    setMsg('เชื่อมต่อไม่ได้: ' + e.message, true);
+    sending = false;
+    tick();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Tick + Auto-send
+// ═══════════════════════════════════════════════════════════
+tick();
+setInterval(tick, 500);
+
+// ★ auto-send ครั้งแรกเมื่อเข้าหน้านี้
+//   - กันด้วย sessionStorage ต่อ user
+//   - ถ้า server redirect มาจาก login ที่ส่งไปแล้ว → ไม่ต้องส่งซ้ำ
+(function autoSendOnce() {
+  const last = getLastAutoSent();
+  const cooldownMs = (COOLDOWN || 60) * 1000;
+
+  // ★ ถ้ามี ?sent=1 → server ส่งไปแล้ว → ไม่ต้อง auto-send + lock cooldown
+  const url = new URL(window.location.href);
+  if (url.searchParams.get('sent') === '1') {
+    console.log('[verify-pending] server ส่งไปแล้ว (sent=1) — lock cooldown');
+    cooldownUntil = Date.now() + cooldownMs;
+    setLastAutoSent(Date.now());
+    tick();
+    return;
+  }
+
+  if (Date.now() - last < cooldownMs) {
+    console.log('[verify-pending] เพิ่งส่งเมื่อ ' +
+      Math.floor((Date.now() - last) / 1000) + ' วิ — ข้าม auto-send');
+    cooldownUntil = last + cooldownMs;
+    tick();
+    return;
+  }
+
+  console.log('[verify-pending] auto-send verify email...');
+  setTimeout(() => {
+    doResend();
+  }, 600);
+})();
+
+// ★ expose ไว้ debug
+window.doResend = doResend;
+</script>
+</body>
+</html>

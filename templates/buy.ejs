@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛒 ซื้อแพ็กเกจ — Keeedum AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+
+  <div class="buy-wrap">
+
+    <!-- HEADER -->
+    <header class="buy-header">
+      <div class="buy-header-left">
+        <a href="/" class="buy-back buy-back-highlight">⬅ กลับหน้าหลัก</a>
+        <a href="/wallet" class="buy-status-link">💰 กระเป๋าเงิน</a>
+        <a href="/status" class="buy-status-link">⏱ สถานะ</a>
+      </div>
+      <h1 class="login-title">🛒 ซื้อแพ็กเกจ</h1>
+      <a href="/logout" class="buy-logout">🚪 ออกจากระบบ</a>
+    </header>
+
+    <!-- ปุ่มกลับ -->
+    <div style="text-align:center; margin-bottom:20px;">
+      <a href="/" class="buy-back buy-back-highlight"
+         style="display:inline-block; font-size:14px; padding:14px 32px;">
+        🏠 กลับหน้าหลัก
+      </a>
+    </div>
+
+    <!-- สถานะปัจจุบัน -->
+    <div class="buy-current">
+      <div class="buy-current-label">สถานะปัจจุบัน</div>
+      <div class="buy-current-time" id="curRemain">กำลังโหลด...</div>
+      <div class="buy-current-exp" id="curExp"></div>
+    </div>
+
+    <!-- ยอดเงิน -->
+    <div class="buy-current" style="padding:14px 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;">
+        <div>
+          <div class="buy-current-label" style="margin-bottom:4px;">💰 ยอดเงินกระเป๋า</div>
+          <div id="walletBal" style="font-size:22px; font-weight:900; color:var(--accent);">฿0.00</div>
+        </div>
+        <a href="/wallet" class="buy-status-link">➕ เติมเงิน</a>
+      </div>
+    </div>
+
+    <!-- แพ็กเกจ -->
+    <h2 class="buy-section">📦 เลือกแพ็กเกจ</h2>
+    <div class="buy-packages">
+      <% Object.entries(packages).forEach(([key, pkg]) => { %>
+        <div class="buy-pkg <%= key === '1day' ? 'buy-pkg-hot' : '' %>"
+             data-pkg="<%= key %>" data-price="<%= pkg.price %>">
+          <% if (key === '1day') { %>
+            <div class="buy-pkg-badge">ยอดนิยม</div>
+          <% } %>
+          <div class="buy-pkg-name"><%= pkg.name %></div>
+          <div class="buy-pkg-price">฿<%= pkg.price %></div>
+          <button class="buy-pkg-btn" onclick="selectPackage('<%= key %>', this)">
+            เลือกแพ็กนี้
+          </button>
+          <button class="buy-pkg-wallet-btn" onclick="buyWithWallet('<%= key %>')">
+            💰 จ่ายจากกระเป๋า
+          </button>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- ขั้นตอนชำระเงิน -->
+    <div id="paymentSection" style="display:none;">
+      <h2 class="buy-section">💸 เลือกวิธีชำระเงิน</h2>
+
+      <div class="pay-tabs">
+        <button class="pay-tab active" id="tabWallet" onclick="switchTab('wallet')">
+          💰 กระเป๋าเงิน
+        </button>
+        <button class="pay-tab" id="tabSlip" onclick="switchTab('slip')">
+          📸 สลิปโอนเงิน
+        </button>
+        <button class="pay-tab" id="tabGift" onclick="switchTab('gift')">
+          🎁 ซองอั่งเปา
+        </button>
+      </div>
+
+      <!-- กระเป๋า -->
+      <div id="panelWallet" class="pay-panel">
+        <div class="buy-note" style="border-left-color:var(--ok); background:rgba(16,185,129,0.08);">
+          ✅ <strong>วิธีนี้เร็วสุด</strong> — ตัดเงินทันที ไม่ต้องรอ admin
+        </div>
+
+        <div class="buy-pay-box">
+          <div class="buy-pay-row">
+            <span>💰 ยอดเงินกระเป๋า</span>
+            <strong id="walletPayBal">฿0.00</strong>
+          </div>
+          <div class="buy-pay-row">
+            <span>💸 ยอดที่ต้องจ่าย</span>
+            <strong id="walletPayAmount">฿0</strong>
+          </div>
+          <div class="buy-pay-row" style="border-bottom:none;">
+            <span>📅 แพ็กเกจ</span>
+            <strong id="walletPayPkg">-</strong>
+          </div>
+        </div>
+
+        <button class="buy-submit" id="walletPayBtn" onclick="buyWithWallet()"
+                style="margin-top:20px;">
+          💰 ยืนยันจ่ายจากกระเป๋า
+        </button>
+
+        <div style="text-align:center; margin-top:12px;">
+          <a href="/wallet" class="buy-status-link"
+             style="border-color:var(--accent); color:var(--accent);">
+            ➕ เติมเงิน
+          </a>
+        </div>
+      </div>
+
+      <!-- สลิป -->
+      <div id="panelSlip" class="pay-panel" style="display:none;">
+        <div class="buy-pay-box">
+          <div class="buy-pay-row">
+            <span>📱 เบอร์พร้อมเพย์ / TrueMoney</span>
+            <strong id="payPhone"><%= payment_phone %></strong>
+          </div>
+          <div class="buy-pay-row">
+            <span>👤 ชื่อบัญชี</span>
+            <strong><%= payment_name %></strong>
+          </div>
+          <div class="buy-pay-row">
+            <span>💰 ยอดที่ต้องโอน</span>
+            <strong id="payAmount">฿0</strong>
+          </div>
+
+          <button class="buy-copy-btn" onclick="copyPhone()">📋 คัดลอกเบอร์</button>
+        </div>
+
+        <div class="buy-note">
+          ⚠️ <strong>หมายเหตุ:</strong>
+          <ul>
+            <li>โอนผ่าน <strong>TrueMoney Wallet</strong> หรือ <strong>พร้อมเพย์</strong></li>
+            <li>แนบสลิป — รอ admin อนุมัติ 5-30 นาที</li>
+          </ul>
+        </div>
+
+        <h2 class="buy-section">📸 อัปโหลดสลิป</h2>
+        <div class="buy-upload">
+          <input type="file" id="slipFile" accept="image/*" hidden>
+          <label for="slipFile" class="buy-upload-btn">📁 เลือกรูปสลิป</label>
+          <div id="slipName" class="buy-upload-name"></div>
+          <img id="slipPreview" class="buy-upload-preview" style="display:none;" alt="slip preview">
+          <button class="buy-submit" id="submitBtn" onclick="submitSlip()" disabled>
+            ✅ ส่งสลิปเพื่อตรวจสอบ
+          </button>
+        </div>
+      </div>
+
+      <!-- ซองอั่งเปา -->
+      <div id="panelGift" class="pay-panel" style="display:none;">
+        <div class="buy-note" style="border-left-color:var(--ok); background:rgba(16,185,129,0.08);">
+          ✅ <strong>วิธีนี้เร็วสุด</strong> — รับเงินเข้าทันที ไม่ต้องรอ admin
+        </div>
+
+        <div class="buy-pay-box">
+          <div class="buy-pay-row">
+            <span>💰 ยอดที่ต้องได้</span>
+            <strong id="giftAmount">฿0</strong>
+          </div>
+          <div class="buy-pay-row" style="border-bottom:none;">
+            <span>📅 แพ็กเกจ</span>
+            <strong id="giftPkgName">-</strong>
+          </div>
+        </div>
+
+        <div class="buy-note">
+          📌 <strong>วิธีรับซองอั่งเปา:</strong>
+          <ul>
+            <li>เปิดแอป TrueMoney → รับซอง → คัดลอกลิงก์</li>
+            <li>วางในช่องด้านล่าง → กด <strong>🎁 รับเงิน</strong></li>
+            <li>ระบบจะ redeem ทันที (5-15 วิ)</li>
+          </ul>
+        </div>
+
+        <h2 class="buy-section">🎁 วางลิงก์ซองอั่งเปา</h2>
+        <div class="buy-upload">
+          <input type="text" id="giftLink" class="gift-input"
+                 placeholder="https://gift.truemoney.com/campaign/?v=xxxxxxxxx">
+          <button class="buy-submit" id="giftBtn" onclick="redeemAndBuy()">
+            🎁 รับเงิน + ซื้อแพ็ก
+          </button>
+          <div id="giftResult" style="margin-top:14px; font-size:13px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ประวัติ -->
+    <h2 class="buy-section">📜 ประวัติการซื้อ</h2>
+    <div class="buy-history" id="historyList">กำลังโหลด...</div>
+
+    <!-- ปุ่มกลับด้านล่าง -->
+    <div style="text-align:center; margin-top:40px; padding-top:24px; border-top:2px solid var(--border-hard);">
+      <a href="/" class="buy-back buy-back-highlight"
+         style="display:inline-block; font-size:14px; padding:16px 40px;">
+        🏠 กลับหน้าหลัก
+      </a>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script id="pkgData" type="application/json"><%- packages_json %></script>
+
+  <script>
+    window.CSRF_TOKEN = "<%= csrf_token %>";
+  </script>
+
+  <script>
+  // ─── STATE ────────────────────────────────────────────
+  const PACKAGES = JSON.parse(document.getElementById('pkgData').textContent || '{}');
+  let selectedPkg = null;
+  let slipFileData = null;
+  let walletBalance = 0;
+
+  // ─── HELPERS ──────────────────────────────────────────
+  function showToast(msg, type = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = type === 'err' ? 'var(--bad)' : 'var(--ok)';
+    t.style.color = type === 'err' ? '#fff' : '#000';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function getCsrf() { return window.CSRF_TOKEN || ''; }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function fmtBaht(n) { return '฿' + Number(n || 0).toFixed(2); }
+
+  // ─── TAB ──────────────────────────────────────────────
+  function switchTab(name) {
+    ['wallet','slip','gift'].forEach(t => {
+      const tab = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+      const panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (tab) tab.classList.toggle('active', t === name);
+      if (panel) panel.style.display = (t === name) ? 'block' : 'none';
+    });
+    if (name === 'wallet') updateWalletPanel();
+  }
+
+  // ─── SELECT PACKAGE ───────────────────────────────────
+  function selectPackage(key, btnEl) {
+    const pkg = PACKAGES[key];
+    if (!pkg) return showToast('⚠️ ไม่พบข้อมูลแพ็กเกจ', 'err');
+
+    selectedPkg = key;
+
+    document.getElementById('payAmount').textContent = '฿' + pkg.price;
+    document.getElementById('giftAmount').textContent = '฿' + pkg.price;
+    document.getElementById('giftPkgName').textContent = pkg.name;
+    document.getElementById('walletPayAmount').textContent = '฿' + pkg.price;
+    document.getElementById('walletPayPkg').textContent = pkg.name;
+
+    const sec = document.getElementById('paymentSection');
+    sec.style.display = 'block';
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    document.querySelectorAll('.buy-pkg').forEach(el => el.classList.remove('buy-pkg-selected'));
+    if (btnEl) {
+      const card = btnEl.closest('.buy-pkg');
+      if (card) card.classList.add('buy-pkg-selected');
+    }
+    updateWalletPanel();
+  }
+
+  // ─── WALLET PANEL ─────────────────────────────────────
+  function updateWalletPanel() {
+    const el = document.getElementById('walletPayBal');
+    if (el) el.textContent = fmtBaht(walletBalance);
+
+    const btn = document.getElementById('walletPayBtn');
+    if (!btn) return;
+
+    const price = selectedPkg ? PACKAGES[selectedPkg].price : 0;
+    if (price > 0 && walletBalance < price) {
+      btn.textContent = '💰 เงินไม่พอ — ไปเติมเงิน';
+      btn.style.background = 'var(--accent)';
+    } else {
+      btn.textContent = '💰 ยืนยันจ่ายจากกระเป๋า';
+      btn.style.background = 'var(--ok)';
+    }
+  }
+
+  // ─── BUY WITH WALLET ──────────────────────────────────
+  async function buyWithWallet(pkgKey) {
+    if (pkgKey && PACKAGES[pkgKey]) {
+      selectedPkg = pkgKey;
+      const sec = document.getElementById('paymentSection');
+      if (sec) sec.style.display = 'block';
+      switchTab('wallet');
+      document.getElementById('walletPayAmount').textContent = '฿' + PACKAGES[pkgKey].price;
+      document.getElementById('walletPayPkg').textContent = PACKAGES[pkgKey].name;
+      updateWalletPanel();
+    }
+
+    if (!selectedPkg) return showToast('⚠️ เลือกแพ็กเกจก่อน', 'err');
+
+    const pkg = PACKAGES[selectedPkg];
+    if (walletBalance < pkg.price) {
+      showToast(`💰 เงินไม่พอ (มี ${fmtBaht(walletBalance)} ต้องการ ฿${pkg.price})`, 'err');
+      setTimeout(() => location.href = '/wallet', 900);
+      return;
+    }
+
+    if (!confirm(`ยืนยันซื้อ ${pkg.name} ราคา ฿${pkg.price}?\n\nตัดจากกระเป๋าเงิน`)) return;
+
+    const btn = document.getElementById('walletPayBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังดำเนินการ...'; }
+
+    try {
+      const csrf = getCsrf();
+      const res = await fetch('/api/buy/with_wallet', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-Token': csrf},
+        body: JSON.stringify({ package: selectedPkg, _csrf: csrf }),
+      });
+
+      if (res.status === 401) {
+        showToast('⚠️ session หมดอายุ', 'err');
+        return setTimeout(() => location.href = '/login', 800);
+      }
+
+      const d = await res.json();
+      if (d.ok) {
+        showToast('✅ ' + d.message);
+        walletBalance = d.balance;
+        updateWalletPanel();
+        setTimeout(() => location.href = '/', 2000);
+      } else if (d.need_topup) {
+        showToast('💰 เงินไม่พอ — ไปเติมเงิน');
+        setTimeout(() => location.href = '/wallet', 900);
+      } else {
+        showToast('❌ ' + (d.error || d.message || 'ล้มเหลว'), 'err');
+        if (btn) { btn.disabled = false; btn.textContent = '💰 ยืนยันจ่ายจากกระเป๋า'; }
+      }
+    } catch (e) {
+      showToast('❌ เกิดข้อผิดพลาด', 'err');
+      if (btn) { btn.disabled = false; btn.textContent = '💰 ยืนยันจ่ายจากกระเป๋า'; }
+    }
+  }
+
+  // ─── COPY PHONE ───────────────────────────────────────
+  async function copyPhone() {
+    const phone = document.getElementById('payPhone').textContent.trim();
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(phone);
+        return showToast('📋 คัดลอกแล้ว');
+      }
+      const ta = document.createElement('textarea');
+      ta.value = phone; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      showToast('📋 คัดลอกแล้ว');
+    } catch (_) {
+      showToast('⚠️ กดค้างเพื่อคัดลอก: ' + phone);
+    }
+  }
+
+  // ─── SLIP UPLOAD ──────────────────────────────────────
+  document.getElementById('slipFile').onchange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 5 * 1024 * 1024) return showToast('⚠️ ไฟล์ใหญ่เกิน 5 MB', 'err');
+    if (!f.type.startsWith('image/')) return showToast('⚠️ ต้องเป็นรูปภาพ', 'err');
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      slipFileData = ev.target.result;
+      const img = document.getElementById('slipPreview');
+      img.src = slipFileData; img.style.display = 'block';
+      document.getElementById('slipName').textContent = '📎 ' + f.name;
+      document.getElementById('submitBtn').disabled = false;
+    };
+    reader.readAsDataURL(f);
+  };
+
+  // ─── SUBMIT SLIP ──────────────────────────────────────
+  async function submitSlip() {
+    if (!selectedPkg) return showToast('⚠️ เลือกแพ็กเกจก่อน', 'err');
+    if (!slipFileData) return showToast('⚠️ อัปโหลดสลิปก่อน', 'err');
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = '⏳ กำลังส่ง...';
+
+    try {
+      const csrf = getCsrf();
+      const res = await fetch('/api/buy/submit', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-Token': csrf},
+        body: JSON.stringify({ package: selectedPkg, slip: slipFileData, _csrf: csrf }),
+      });
+
+      if (res.status === 401) {
+        showToast('⚠️ session หมดอายุ', 'err');
+        return setTimeout(() => location.href = '/login', 800);
+      }
+
+      const d = await res.json();
+      if (d.ok) {
+        showToast('✅ ส่งสลิปแล้ว — รอ admin อนุมัติ');
+        setTimeout(() => location.href = '/', 2500);
+      } else {
+        showToast('❌ ' + (d.error || 'ล้มเหลว'), 'err');
+        btn.disabled = false; btn.textContent = '✅ ส่งสลิปเพื่อตรวจสอบ';
+      }
+    } catch (e) {
+      showToast('❌ เกิดข้อผิดพลาด', 'err');
+      btn.disabled = false; btn.textContent = '✅ ส่งสลิปเพื่อตรวจสอบ';
+    }
+  }
+
+  // ─── REDEEM + BUY ─────────────────────────────────────
+  async function redeemAndBuy() {
+    if (!selectedPkg) return showToast('⚠️ เลือกแพ็กเกจก่อน', 'err');
+
+    const link = document.getElementById('giftLink').value.trim();
+    if (!link) return showToast('⚠️ ใส่ลิงก์ซองก่อน', 'err');
+
+    const btn = document.getElementById('giftBtn');
+    const result = document.getElementById('giftResult');
+
+    btn.disabled = true; btn.textContent = '⏳ กำลังรับเงิน...';
+    result.innerHTML = '';
+
+    try {
+      const csrf = getCsrf();
+      const res = await fetch('/api/buy/redeem_and_purchase', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-Token': csrf},
+        body: JSON.stringify({ package: selectedPkg, link, _csrf: csrf }),
+      });
+
+      if (res.status === 401) {
+        showToast('⚠️ session หมดอายุ', 'err');
+        return setTimeout(() => location.href = '/login', 800);
+      }
+
+      const d = await res.json();
+      if (d.ok) {
+        showToast('✅ ' + d.message);
+        result.innerHTML = `
+          <div style="color:var(--ok); font-weight:900; line-height:1.6;">
+            ✅ ${escapeHtml(d.message)}<br>
+            💰 ได้รับ: ${fmtBaht(d.amount)}<br>
+            📅 ต่อเวลา: +${d.days} วัน<br>
+            ⏱ หมดอายุใหม่: ${escapeHtml(d.new_expires)}
+          </div>
+        `;
+        document.getElementById('giftLink').value = '';
+        setTimeout(() => location.href = '/', 3000);
+      } else {
+        showToast('❌ ' + (d.message || 'ล้มเหลว'), 'err');
+        result.innerHTML = `<div style="color:var(--bad); font-weight:900;">
+          ❌ ${escapeHtml(d.message || 'ล้มเหลว')}
+        </div>`;
+        btn.disabled = false; btn.textContent = '🎁 รับเงิน + ซื้อแพ็ก';
+      }
+    } catch (e) {
+      showToast('❌ เกิดข้อผิดพลาด', 'err');
+      btn.disabled = false; btn.textContent = '🎁 รับเงิน + ซื้อแพ็ก';
+    }
+  }
+
+  // ─── LOAD STATUS ──────────────────────────────────────
+  async function loadStatus() {
+    try {
+      const r = await fetch('/api/buy/status');
+      if (r.status === 401) { location.href = '/login'; return; }
+      const d = await r.json();
+      if (!d.ok) return;
+      document.getElementById('curRemain').textContent = d.remaining_text || 'หมดอายุ';
+      document.getElementById('curExp').textContent = d.expires_text || '';
+    } catch (e) {}
+  }
+
+  async function loadWallet() {
+    try {
+      const r = await fetch('/api/wallet');
+      if (!r.ok) return;
+      const d = await r.json();
+      if (!d.ok) return;
+      walletBalance = d.balance || 0;
+      const el = document.getElementById('walletBal');
+      if (el) el.textContent = fmtBaht(walletBalance);
+      updateWalletPanel();
+    } catch (e) {}
+  }
+
+  async function loadHistory() {
+    try {
+      const r = await fetch('/api/buy/history');
+      if (r.status === 401) return;
+      const d = await r.json();
+      const list = document.getElementById('historyList');
+      if (!d.items || !d.items.length) {
+        list.innerHTML = '<div class="buy-empty">ยังไม่มีประวัติ</div>';
+        return;
+      }
+      list.innerHTML = d.items.map(p => `
+        <div class="buy-history-item">
+          <div class="buy-history-main">
+            <span class="buy-history-pkg">${escapeHtml(p.pkg_name)}</span>
+            <span class="buy-history-price">฿${p.price}</span>
+          </div>
+          <div class="buy-history-meta">
+            <span>${p.date_text}</span>
+            <span class="buy-history-status buy-history-${p.status}">${p.status_text}</span>
+          </div>
+          ${p.admin_note ? `<div class="buy-history-note">💬 ${escapeHtml(p.admin_note)}</div>` : ''}
+        </div>
+      `).join('');
+    } catch (e) {}
+  }
+
+  // ─── START ────────────────────────────────────────────
+  loadStatus();
+  loadWallet();
+  loadHistory();
+  setInterval(loadStatus, 10000);
+  setInterval(loadWallet, 30000);
+  </script>
+
+</body>
+</html>

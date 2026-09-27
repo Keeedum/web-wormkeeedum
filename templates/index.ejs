@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1117">
+
+  <title>⚡ Keeedum AI — ห้องสนทนา</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+  <meta name="csrf-token" content="<%= csrf_token %>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="⚡ Keeedum AI — AI ตอบไทย สร้าง/แก้โค้ดได้">
+  <meta property="og:description" content="AI ตอบไทยล้วน · สร้าง/แก้โค้ดได้ · หลายโมเดล · เขียนไฟล์อัตโนมัติ">
+  <meta property="og:image" content="/static/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="th_TH">
+  <meta property="og:site_name" content="Keeedum AI">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="⚡ Keeedum AI">
+  <meta name="twitter:description" content="AI ตอบไทย สร้าง/แก้โค้ดได้">
+  <meta name="twitter:image" content="/static/og-image.png">
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="logo">⚡ Keeedum AI</div>
+  <div class="sub">ตอบไทยล้วน · สร้าง/แก้โค้ดได้</div>
+
+  <!-- TIME STATUS -->
+  <div class="time-status" id="timeStatus">
+    <div class="time-status-label">⏱ เวลาคงเหลือ</div>
+    <div class="time-status-value" id="timeRemain">กำลังโหลด...</div>
+    <div class="time-status-exp" id="timeExpires"></div>
+    <div class="time-status-bar">
+      <div class="time-status-fill" id="timeBarFill"></div>
+    </div>
+    <a href="/buy" class="time-status-buy" id="timeBuyBtn" style="display:none;">
+      ⚠️ หมดอายุ — คลิกเพื่อซื้อแพ็ก
+    </a>
+    <a href="/buy" class="time-status-buy" id="timeBuyBtnOk">
+      🛒 ซื้อแพ็กเพิ่ม
+    </a>
+  </div>
+
+  <!-- MODELS -->
+  <div class="sec-label">
+    <span>🧠 โมเดล</span>
+    <button class="icon-btn" id="refreshModelsBtn" title="รีเฟรชรายการโมเดล" type="button">🔄</button>
+  </div>
+
+  <div class="model-box">
+    <select id="modelSel" class="sel">
+      <option value="">— กำลังโหลด —</option>
+    </select>
+    <div class="model-info" id="modelInfo">
+      <span class="model-badge" id="modelParam"></span>
+      <span class="model-badge" id="modelQuant"></span>
+      <span class="model-badge" id="modelSize"></span>
+    </div>
+  </div>
+
+  <!-- TEMPERATURE -->
+  <div class="sec-label">🌡️ ความคิดสร้างสรรค์</div>
+  <div class="slider-row">
+    <input type="range" id="tempSlider" min="0" max="1.5" step="0.1" value="0.0">
+  </div>
+  <div class="temp-label" id="tempLabel">0.0 · สมดุล</div>
+
+  <!-- PERSONA / KEYBAR -->
+  <div class="sec-label">🎭 นิสัย (เลื่อนแนวนอน)</div>
+  <div class="keybar" id="keybar" role="tablist" aria-label="นิสัย">
+    <button class="keycap active" data-name="ปกติ" type="button" role="tab" aria-selected="true">ปกติ</button>
+  </div>
+  <div class="persona-label" id="personaLabel">กำลังใช้: ปกติ</div>
+
+  <button class="btn-sm" onclick="reloadPrompts()" type="button">🔄 รีเฟรชนิสัย</button>
+
+  <!-- SWITCHES -->
+  <label class="switch-row">
+    <input type="checkbox" id="swThink"> <span>แสดงกระบวนการคิด</span>
+  </label>
+  <label class="switch-row">
+    <input type="checkbox" id="swAutow" checked> <span>เขียนไฟล์อัตโนมัติ</span>
+  </label>
+  <label class="switch-row">
+    <input type="checkbox" id="swEdit" checked> <span>โหมดแก้ไขโค้ดเดิม</span>
+  </label>
+  <label class="switch-row">
+    <input type="checkbox" id="swRetry" checked> <span>ลองใหม่ถ้าถูกปฏิเสธ</span>
+  </label>
+
+  <!-- SERVICES -->
+  <div class="sec-label">✨ บริการ</div>
+  <a href="/daily"  class="btn-sm btn-card">🎁 รางวัลประจำวัน</a>
+  <a href="/wallet" class="btn-sm btn-card">💰 กระเป๋าเงิน</a>
+  <a href="/buy"    class="btn-sm btn-card">🛒 ซื้อแพ็กเกจ</a>
+  <a href="/status" class="btn-sm">⏱ สถานะการใช้งาน</a>
+  <a href="/tools/mail" class="btn-sm">🛡 Mail Security &amp; WAF</a>
+  <a href="/account" class="btn-sm">⚙️ จัดการบัญชี</a>
+
+  <% if (typeof is_admin !== 'undefined' && is_admin) { %>
+    <a href="/admin" class="btn-sm">🛡 Admin</a>
+  <% } %>
+
+  <!-- TOOLS -->
+  <div class="sec-label">⚙️ เครื่องมือ</div>
+  <button class="btn-sm" onclick="openFolderPicker()" type="button">📁 เปลี่ยนโฟลเดอร์</button>
+  <button class="btn-sm" onclick="clearChat()" type="button">🗑 ล้างบทสนทนา</button>
+  <button class="btn-sm btn-bad" onclick="stopGen()" type="button">⏹ หยุดสร้าง</button>
+
+  <a href="/logout" class="btn-sm">🚪 ออกจากระบบ</a>
+
+  <div class="status" id="status">⏳ กำลังตรวจสอบ...</div>
+
+  <div class="folder-path" id="folderLabel">-</div>
+
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+  <header class="header">
+    <button class="header-btn" id="menuToggle" onclick="toggleSidebar()" type="button" title="เมนู">☰</button>
+    <span class="header-title">💬 ห้องสนทนา</span>
+    <div class="header-actions">
+      <a href="/account" class="header-btn" title="จัดการบัญชี">⚙️</a>
+      <button class="header-btn" onclick="toggleUserMenu()" type="button" title="บัญชี">👤</button>
+    </div>
+  </header>
+
+  <!-- USER MENU (dropdown) -->
+  <div class="user-menu" id="userMenu">
+    <div class="user-menu-header">
+      <div class="user-menu-avatar">👤</div>
+      <div>
+        <div class="user-menu-name"><%= username || 'ผู้ใช้' %></div>
+        <div class="user-menu-sub">คลิกเพื่อจัดการบัญชี</div>
+      </div>
+    </div>
+    <a href="/account" class="user-menu-item">⚙️ จัดการบัญชี</a>
+    <a href="/account#password" class="user-menu-item">🔑 เปลี่ยนรหัสผ่าน</a>
+    <a href="/status" class="user-menu-item">⏱ สถานะการใช้งาน</a>
+    <a href="/wallet" class="user-menu-item">💰 กระเป๋าเงิน</a>
+    <a href="/buy" class="user-menu-item">🛒 ซื้อแพ็กเกจ</a>
+    <div class="user-menu-divider"></div>
+    <a href="/logout" class="user-menu-item user-menu-danger">🚪 ออกจากระบบ</a>
+  </div>
+  <div class="user-menu-backdrop" id="userMenuBackdrop" onclick="toggleUserMenu()"></div>
+
+  <div class="chat" id="chat"></div>
+
+  <div class="thinking-live" id="thinkLive"></div>
+
+  <div class="input-bar">
+    <textarea id="input"
+              placeholder="พิมพ์ข้อความ... (Enter ส่ง, Shift+Enter ขึ้นบรรทัดใหม่)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="send()" type="button">ส่ง ➤</button>
+  </div>
+
+</main>
+
+<!-- MODAL: เลือกโฟลเดอร์ -->
+<div class="modal-bg" id="folderModal">
+  <div class="modal">
+    <h3>📁 เลือกโฟลเดอร์โปรเจกต์</h3>
+    <input type="text" id="pathInput" placeholder="path">
+    <div class="dir-list" id="dirList">
+      <div class="dir-empty">กำลังโหลด...</div>
+    </div>
+    <div class="actions">
+      <button class="btn-ghost" onclick="closeFolderPicker()" type="button">ปิด</button>
+      <button class="btn-primary" onclick="useFolder()" type="button">✓ เลือกโฟลเดอร์นี้</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Copy -->
+<div class="modal-bg" id="copyModal" style="display:none;">
+  <div class="modal">
+    <h3>📋 คัดลอกข้อความ</h3>
+    <textarea id="copyTextarea" readonly></textarea>
+    <div class="actions" style="margin-top:12px;">
+      <button class="btn-ghost" onclick="document.getElementById('copyModal').remove()" type="button">ปิด</button>
+      <button class="btn-primary" onclick="selectCopyText()" type="button">เลือกทั้งหมด</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DAILY REWARD -->
+<div class="modal-bg" id="dailyPopup">
+  <div class="modal daily-popup-modal">
+    <div class="daily-popup-icon">🎁</div>
+    <h3 class="daily-popup-title">รางวัลประจำวันมาแล้ว!</h3>
+    <p class="daily-popup-desc">
+      คุณมีสิทธิ์รับ <strong>+1 ชั่วโมง</strong><br>
+      ฟรี! ทุกวัน ไม่มีจำกัด
+    </p>
+    <div class="daily-popup-actions">
+      <button class="btn-ghost" onclick="closeDailyPopup()" type="button">⏱ ทีหลัง</button>
+      <a href="/daily" class="btn-primary"
+         style="text-decoration:none; display:inline-block; text-align:center;">
+        🎁 ไปกดรับ
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  window.CSRF_TOKEN       = <%- JSON.stringify(csrf_token || '') %>;
+  window.USERNAME         = <%- JSON.stringify(username || '') %>;
+  window.IS_ADMIN         = <%- JSON.stringify(!!is_admin) %>;
+  window.IS_ACTIVE        = <%- JSON.stringify(!!is_active) %>;
+  window.SHOW_DAILY_POPUP = <%- JSON.stringify(!!show_daily_popup) %>;
+</script>
+
+<script src="/static/script.js"></script>
+<script src="/static/retry.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// TIME STATUS
+// ═══════════════════════════════════════════════════════════
+var timeRemainSec = 0;
+var timeTotalSec  = 0;
+
+async function loadTimeStatus() {
+  try {
+    const r = await fetch("/api/buy/status");
+    if (r.status === 401) return;
+    const d = await r.json();
+    if (!d.ok) return;
+
+    timeRemainSec = d.remaining || 0;
+    if (timeTotalSec === 0 && timeRemainSec > 0) {
+      timeTotalSec = Math.max(timeRemainSec, 2592000);
+    }
+    if (d.expires_text) window.__TIME_EXPIRES__ = d.expires_text;
+    renderTimeStatus();
+  } catch (e) {
+    console.warn("[TIME] load error:", e);
+  }
+}
+
+function renderTimeStatus() {
+  const el       = document.getElementById("timeRemain");
+  const expEl    = document.getElementById("timeExpires");
+  const barEl    = document.getElementById("timeBarFill");
+  const buyBtn   = document.getElementById("timeBuyBtn");
+  const buyBtnOk = document.getElementById("timeBuyBtnOk");
+  const box      = document.getElementById("timeStatus");
+  if (!el) return;
+
+  if (timeRemainSec <= 0) {
+    el.textContent = "⚠️ หมดอายุ";
+    el.style.color = "var(--bad)";
+    if (expEl) expEl.textContent = "";
+    if (barEl) { barEl.style.width = "0%"; barEl.style.background = "var(--bad)"; }
+    if (box) box.classList.add("time-status-expired");
+    if (buyBtn)   buyBtn.style.display   = "block";
+    if (buyBtnOk) buyBtnOk.style.display = "none";
+    return;
+  }
+
+  const d = Math.floor(timeRemainSec / 86400);
+  const h = Math.floor((timeRemainSec % 86400) / 3600);
+  const m = Math.floor((timeRemainSec % 3600) / 60);
+  const s = timeRemainSec % 60;
+
+  let txt = "";
+  if (d > 0) txt += d + " วัน ";
+  if (h > 0 || d > 0) txt += h + " ชม. ";
+  if (m > 0 || h > 0 || d > 0) txt += m + " นาที ";
+  txt += s + " วิ";
+
+  el.textContent = txt.trim();
+
+  if (timeRemainSec < 3600) {
+    el.style.color = "var(--bad)";
+    if (barEl) barEl.style.background = "var(--bad)";
+  } else if (timeRemainSec < 86400) {
+    el.style.color = "var(--accent)";
+    if (barEl) barEl.style.background = "var(--accent)";
+  } else {
+    el.style.color = "var(--ok)";
+    if (barEl) barEl.style.background = "var(--ok)";
+  }
+
+  if (expEl && window.__TIME_EXPIRES__) expEl.textContent = "หมด: " + window.__TIME_EXPIRES__;
+
+  if (barEl && timeTotalSec > 0) {
+    const pct = Math.max(0, Math.min(100, (timeRemainSec / timeTotalSec) * 100));
+    barEl.style.width = pct + "%";
+  }
+
+  if (box) box.classList.remove("time-status-expired");
+  if (buyBtn)   buyBtn.style.display   = "none";
+  if (buyBtnOk) buyBtnOk.style.display = "block";
+}
+
+function tickTimeStatus() {
+  if (timeRemainSec > 0) {
+    timeRemainSec -= 1;
+    renderTimeStatus();
+  }
+}
+
+loadTimeStatus();
+setInterval(tickTimeStatus, 1000);
+setInterval(loadTimeStatus, 60000);
+
+// ═══════════════════════════════════════════════════════════
+// DAILY REWARD POPUP
+// ═══════════════════════════════════════════════════════════
+function closeDailyPopup() {
+  const p = document.getElementById("dailyPopup");
+  if (p) p.classList.remove("show");
+  try { sessionStorage.setItem("dailyPopupClosed", "1"); } catch (_) {}
+}
+
+if (window.SHOW_DAILY_POPUP) {
+  setTimeout(function () {
+    const popup = document.getElementById("dailyPopup");
+    if (popup && sessionStorage.getItem("dailyPopupClosed") !== "1") {
+      popup.classList.add("show");
+    }
+  }, 800);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TEMPERATURE SLIDER
+// ═══════════════════════════════════════════════════════════
+var tempSliderEl = document.getElementById("tempSlider");
+var tempLabelEl  = document.getElementById("tempLabel");
+if (tempSliderEl && tempLabelEl) {
+  tempSliderEl.addEventListener("input", function () {
+    var v = parseFloat(tempSliderEl.value).toFixed(1);
+    var hint = "สมดุล";
+    if (v < 0.4) hint = "แม่นยำ";
+    else if (v > 1.0) hint = "สร้างสรรค์";
+    tempLabelEl.textContent = v + " · " + hint;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// HEADER — Sidebar toggle + User menu
+// ═══════════════════════════════════════════════════════════
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (sb) sb.classList.toggle('open');
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById('userMenu');
+  const bg   = document.getElementById('userMenuBackdrop');
+  if (!menu || !bg) return;
+  const open = menu.classList.toggle('show');
+  bg.classList.toggle('show', open);
+}
+
+document.addEventListener('click', function (e) {
+  const menu = document.getElementById('userMenu');
+  if (!menu || !menu.classList.contains('show')) return;
+  if (menu.contains(e.target)) return;
+  if (e.target.closest && e.target.closest('.header-btn')) return;
+  menu.classList.remove('show');
+  const bg = document.getElementById('userMenuBackdrop');
+  if (bg) bg.classList.remove('show');
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    const menu = document.getElementById('userMenu');
+    if (menu) menu.classList.remove('show');
+    const bg = document.getElementById('userMenuBackdrop');
+    if (bg) bg.classList.remove('show');
+  }
+});
+
+window.closeDailyPopup = closeDailyPopup;
+window.toggleSidebar = toggleSidebar;
+window.toggleUserMenu = toggleUserMenu;
+</script>
+
+</body>
+</html>

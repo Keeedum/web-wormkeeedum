@@ -1,0 +1,535 @@
+<!-- language: EJS, file: templates/account.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚙️ จัดการบัญชี — Keeedum AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+<div class="buy-wrap" style="max-width:860px;">
+
+  <header class="buy-header">
+    <div class="buy-header-left">
+      <a href="/" class="buy-back">⬅ กลับ</a>
+      <a href="/status" class="buy-status-link">⏱ สถานะ</a>
+      <a href="/wallet" class="buy-status-link">💰 กระเป๋า</a>
+    </div>
+    <h1 class="login-title">⚙️ จัดการบัญชี</h1>
+    <a href="/logout" class="buy-logout">ออก</a>
+  </header>
+
+  <!-- ═══ สรุปบัญชี ═══ -->
+  <div class="buy-current" style="text-align:left;padding:24px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+      <div>
+        <div class="buy-current-label">บัญชี</div>
+        <div style="font-size:16px;font-weight:900;color:var(--accent);word-break:break-all;">
+          <%= username %><% if (is_admin) { %> <span style="font-size:11px;color:#ec4899;">[ADMIN]</span><% } %>
+        </div>
+      </div>
+      <div>
+        <div class="buy-current-label">อีเมล</div>
+        <div style="font-size:13px;word-break:break-all;">
+          <%= email || '—' %>
+          <% if (email && email_verified) { %>
+            <span class="buy-history-status buy-history-approved" style="font-size:10px;padding:2px 6px;margin-left:4px;">✓ ยืนยันแล้ว</span>
+          <% } else if (email) { %>
+            <span class="buy-history-status buy-history-pending" style="font-size:10px;padding:2px 6px;margin-left:4px;">⏳ ยังไม่ยืนยัน</span>
+          <% } %>
+        </div>
+      </div>
+      <div>
+        <div class="buy-current-label">เวลาคงเหลือ</div>
+        <div style="font-size:13px;color:var(--ok);font-weight:900;">
+          <%= subscription.remaining_text %>
+        </div>
+      </div>
+      <div>
+        <div class="buy-current-label">กระเป๋าเงิน</div>
+        <div style="font-size:13px;color:var(--accent);font-weight:900;">
+          ฿<%= Number(wallet.balance || 0).toFixed(2) %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Tabs ═══ -->
+  <div class="pay-tabs" style="margin-top:20px;">
+    <button class="pay-tab active" onclick="switchTab('profile', this)">👤 โปรไฟล์</button>
+    <button class="pay-tab" onclick="switchTab('password', this)">🔑 รหัสผ่าน</button>
+    <button class="pay-tab" onclick="switchTab('email', this)">📧 อีเมล</button>
+    <button class="pay-tab" onclick="switchTab('phone', this)">📱 เบอร์</button>
+    <button class="pay-tab" onclick="switchTab('activity', this)">📜 ประวัติ</button>
+    <button class="pay-tab" onclick="switchTab('danger', this)" style="color:var(--bad);">⚠️ ลบบัญชี</button>
+  </div>
+
+  <!-- ═══ PROFILE ═══ -->
+  <div class="pay-panel" id="panel-profile" style="display:block;">
+    <div class="buy-pay-box">
+      <label class="login-label">ชื่อที่แสดง (display name)</label>
+      <input type="text" id="pName" class="gift-input" maxlength="60"
+             value="<%= (profile.display_name || '') %>" placeholder="ชื่อเล่น / ชื่อที่อยากให้คนเห็น">
+
+      <label class="login-label" style="margin-top:14px;">แนะนำตัว (bio)</label>
+      <textarea id="pBio" class="gift-input" maxlength="300" rows="4"
+                placeholder="เขียนอะไรสั้น ๆ เกี่ยวกับคุณ"><%= (profile.bio || '') %></textarea>
+
+      <button class="buy-submit" onclick="saveProfile()" style="margin-top:16px;">
+        💾 บันทึกโปรไฟล์
+      </button>
+      <div id="profMsg" class="verify-msg"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PASSWORD ═══ -->
+  <div class="pay-panel" id="panel-password" style="display:none;">
+    <div class="buy-pay-box">
+      <label class="login-label">รหัสผ่านเดิม</label>
+      <input type="password" id="pwOld" class="gift-input" autocomplete="current-password">
+
+      <label class="login-label" style="margin-top:14px;">รหัสผ่านใหม่</label>
+      <input type="password" id="pwNew" class="gift-input" autocomplete="new-password">
+      <div style="height:4px;background:var(--border);margin-top:6px;">
+        <div id="pwBar" style="height:100%;width:0%;background:var(--bad);transition:width .15s;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--dim);margin-top:4px;">
+        STRENGTH: <span id="pwLabel">—</span>
+      </div>
+
+      <label class="login-label" style="margin-top:14px;">ยืนยันรหัสใหม่</label>
+      <input type="password" id="pwCf" class="gift-input" autocomplete="new-password">
+
+      <button class="buy-submit" onclick="changePassword()" style="margin-top:16px;">
+        🔑 เปลี่ยนรหัสผ่าน
+      </button>
+      <div id="pwMsg" class="verify-msg"></div>
+    </div>
+  </div>
+
+  <!-- ═══ EMAIL ═══ -->
+  <div class="pay-panel" id="panel-email" style="display:none;">
+    <div class="buy-pay-box">
+      <div class="buy-pay-row"><span>อีเมลปัจจุบัน</span><strong><%= email || '—' %></strong></div>
+      <div class="buy-pay-row"><span>สถานะ</span>
+        <strong>
+          <% if (email_verified) { %>✅ ยืนยันแล้ว<% } else { %>⏳ ยังไม่ยืนยัน<% } %>
+        </strong>
+      </div>
+      <div class="buy-pay-row" style="border-bottom:none;"><span>การแจ้งเตือน</span><strong>เปิด</strong></div>
+    </div>
+
+    <% if (email && !email_verified) { %>
+      <div class="buy-note" style="border-left-color:var(--accent);">
+        <strong>ยังไม่ยืนยันอีเมล</strong> — กดปุ่มด้านล่างเพื่อส่งลิงก์อีกครั้ง
+        <div style="margin-top:10px;">
+          <button class="buy-status-link" id="resendBtn" onclick="resendVerify()" type="button">📮 ส่งลิงก์ยืนยันอีกครั้ง</button>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="buy-pay-box" style="margin-top:14px;">
+      <label class="login-label">เปลี่ยนอีเมล</label>
+      <input type="email" id="newEmail" class="gift-input" placeholder="you@example.com">
+      <button class="buy-submit" onclick="changeEmail()" style="margin-top:14px;">
+        📧 เปลี่ยนอีเมล
+      </button>
+      <div style="font-size:11px;color:var(--dim);margin-top:8px;">
+        ※ เปลี่ยนแล้วจะต้องยืนยันอีเมลใหม่
+      </div>
+      <div id="emailMsg" class="verify-msg"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PHONE ═══ -->
+  <div class="pay-panel" id="panel-phone" style="display:none;">
+    <div class="buy-pay-box">
+      <div class="buy-pay-row"><span>เบอร์ปัจจุบัน</span><strong id="phoneNow"><%= (profile.phone || '—') %></strong></div>
+      <div class="buy-pay-row" style="border-bottom:none;"><span>สถานะ</span>
+        <strong id="phoneStatus">
+          <% if (profile.phone_verified) { %>✅ ยืนยันแล้ว<% } else if (profile.phone) { %>⏳ ยังไม่ยืนยัน<% } else { %>— ยังไม่มี —<% } %>
+        </strong>
+      </div>
+    </div>
+
+    <div class="buy-pay-box">
+      <label class="login-label">เพิ่ม/เปลี่ยนเบอร์</label>
+      <input type="tel" id="phoneInput" class="gift-input" placeholder="0812345678" maxlength="10">
+      <button class="buy-submit" onclick="phoneStart()" style="margin-top:14px;">
+        📱 ส่ง OTP
+      </button>
+      <div id="phoneMsg" class="verify-msg"></div>
+    </div>
+
+    <div class="buy-pay-box" id="otpBox" style="display:none;margin-top:14px;">
+      <label class="login-label">กรอก OTP 6 หลัก</label>
+      <input type="text" id="otpInput" class="gift-input" placeholder="123456" maxlength="6" inputmode="numeric" style="font-size:24px;letter-spacing:8px;text-align:center;">
+      <button class="buy-submit" onclick="phoneVerify()" style="margin-top:14px;">
+        ✅ ยืนยัน OTP
+      </button>
+      <div id="otpMsg" class="verify-msg"></div>
+    </div>
+
+    <% if (profile.phone) { %>
+      <button class="buy-status-link" onclick="phoneRemove()" style="margin-top:14px;border-color:var(--bad);color:var(--bad);">
+        🗑 ลบเบอร์
+      </button>
+    <% } %>
+  </div>
+
+  <!-- ═══ ACTIVITY ═══ -->
+  <div class="pay-panel" id="panel-activity" style="display:none;">
+    <h2 class="buy-section">// กิจกรรมล่าสุด</h2>
+    <div class="buy-history" id="activityList">
+      <div class="buy-empty">กำลังโหลด...</div>
+    </div>
+  </div>
+
+  <!-- ═══ DANGER ═══ -->
+  <div class="pay-panel" id="panel-danger" style="display:none;">
+    <div class="buy-note" style="border-left-color:var(--bad);background:rgba(239,68,68,0.08);">
+      <strong style="color:var(--bad);">⚠️ คำเตือน</strong><br>
+      การลบบัญชีจะลบข้อมูลทุกอย่างถาวร — ประวัติการซื้อ เวลาที่เหลือ กระเป๋าเงิน และข้อมูลทั้งหมด <strong>กู้คืนไม่ได้</strong>
+    </div>
+
+    <div class="buy-pay-box">
+      <label class="login-label">รหัสผ่าน</label>
+      <input type="password" id="delPw" class="gift-input" autocomplete="current-password">
+
+      <label class="login-label" style="margin-top:14px;">
+        พิมพ์ <code style="color:var(--bad);">DELETE</code> เพื่อยืนยัน
+      </label>
+      <input type="text" id="delConfirm" class="gift-input" placeholder="DELETE" autocomplete="off">
+
+      <button class="buy-submit" onclick="deleteAccount()"
+              style="background:var(--bad);color:#fff;margin-top:16px;">
+        🗑 ลบบัญชีถาวร
+      </button>
+      <div id="delMsg" class="verify-msg"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>window.CSRF_TOKEN = "<%- JSON.stringify(csrf_token || '') %>";</script>
+<script>
+const $ = (id) => document.getElementById(id);
+const CSRF = window.CSRF_TOKEN || '';
+
+function toast(m, err) {
+  const t = $('toast');
+  if (!t) return;
+  t.textContent = m;
+  t.style.background = err ? 'var(--bad)' : 'var(--ok)';
+  t.style.color = err ? '#fff' : '#000';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+function setMsg(id, text, err) {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'verify-msg ' + (err ? 'err' : 'ok');
+}
+async function post(url, body = {}) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
+    body: JSON.stringify({ ...body, _csrf: CSRF }),
+  });
+  let d = {};
+  try { d = await r.json(); } catch (_) {}
+  return { status: r.status, ok: r.ok, data: d };
+}
+
+function switchTab(name, btn) {
+  ['profile','password','email','phone','activity','danger'].forEach((t) => {
+    const p = $('panel-' + t);
+    if (p) p.style.display = (t === name) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.pay-tab').forEach((b) => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (name === 'activity') loadActivity();
+}
+
+// ═══ Profile ═══
+async function saveProfile() {
+  setMsg('profMsg', 'กำลังบันทึก...');
+  const { data } = await post('/api/account/profile', {
+    display_name: $('pName').value,
+    bio: $('pBio').value,
+  });
+  if (data.ok) { setMsg('profMsg', '✓ บันทึกแล้ว'); toast('📝 บันทึกโปรไฟล์'); }
+  else setMsg('profMsg', data.error || 'ล้มเหลว', true);
+}
+
+// ═══ Password ═══
+$('pwNew') && $('pwNew').addEventListener('input', (e) => {
+  const p = e.target.value;
+  let s = 0;
+  if (p.length >= 6) s++;
+  if (p.length >= 10) s++;
+  if (/[A-Z]/.test(p) && /[a-z]/.test(p)) s++;
+  if (/[0-9]/.test(p)) s++;
+  if (/[^A-Za-z0-9]/.test(p)) s++;
+  s = Math.min(s, 5);
+  const labels = ['—','อ่อน','พอใช้','ดี','แข็ง','แข็งมาก'];
+  const colors = ['#2a2a2a','var(--bad)','var(--warn)','#d4a24a','var(--ok)','var(--ok)'];
+  $('pwBar').style.width = (s / 5 * 100) + '%';
+  $('pwBar').style.background = colors[s];
+  $('pwLabel').textContent = labels[s];
+});
+
+async function changePassword() {
+  setMsg('pwMsg', 'กำลังเปลี่ยน...');
+  const { data } = await post('/api/account/change-password', {
+    old_password: $('pwOld').value,
+    new_password: $('pwNew').value,
+    confirm_password: $('pwCf').value,
+  });
+  if (data.ok) {
+    setMsg('pwMsg', '✓ เปลี่ยนรหัสผ่านสำเร็จ');
+    toast('🔑 เปลี่ยนรหัสผ่านแล้ว');
+    $('pwOld').value = $('pwNew').value = $('pwCf').value = '';
+    $('pwBar').style.width = '0%';
+    $('pwLabel').textContent = '—';
+  } else {
+    setMsg('pwMsg', data.error || 'ล้มเหลว', true);
+  }
+}
+
+// ═══ Email ═══
+async function resendVerify() {
+  const btn = $('resendBtn');
+  if (btn && btn.disabled) return;
+
+  setMsg('emailMsg', 'กำลังส่ง...', false);
+  if (btn) btn.disabled = true;
+
+  try {
+    const r = await fetch('/api/account/resend-verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': CSRF,
+        'Accept': 'application/json',
+      },
+      credentials: 'same-origin',
+      redirect: 'manual',
+      body: JSON.stringify({ _csrf: CSRF }),
+    });
+
+    // ★ อ่านเป็น text ก่อน — กันกรณี server ส่ง HTML
+    const raw = await r.text();
+    let d = {};
+    try { d = JSON.parse(raw); } catch (_) {
+      setMsg('emailMsg', `ผิดพลาด HTTP ${r.status} (ไม่ใช่ JSON)`, true);
+      if (btn) btn.disabled = false;
+      return;
+    }
+
+    // ★ สำเร็จ
+    if (r.ok && d.ok) {
+      setMsg('emailMsg', '✓ ' + (d.message || 'ส่งแล้ว'), false);
+      toast('📮 ส่งลิงก์ยืนยันแล้ว');
+      startCooldown(btn, d.cooldown || 60);
+      return;
+    }
+
+    // ★ ติด cooldown → แสดงเวลาที่ต้องรอจริง
+    if (d.error === 'COOLDOWN' && d.wait_sec) {
+      setMsg('emailMsg', d.message || `รออีก ${d.wait_sec} วินาที`, true);
+      startCooldown(btn, d.wait_sec);
+      return;
+    }
+
+    // ★ ส่งเกินโควต้าวัน
+    if (d.error === 'DAILY_LIMIT') {
+      setMsg('emailMsg', d.message || 'ส่งครบโควต้าวันนี้แล้ว', true);
+      if (btn) btn.disabled = false;
+      return;
+    }
+
+    // error อื่น
+    setMsg('emailMsg', d.message || d.error || `HTTP ${r.status}`, true);
+    if (btn) btn.disabled = false;
+  } catch (e) {
+    setMsg('emailMsg', 'เชื่อมต่อไม่ได้: ' + e.message, true);
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ★ helper — นับถอยหลังในปุ่ม
+function startCooldown(btn, seconds) {
+  if (!btn) return;
+  const orig = btn.dataset.origText || btn.textContent;
+  btn.dataset.origText = orig;
+  let left = seconds;
+  btn.disabled = true;
+  btn.textContent = `⏳ รออีก ${left} วินาที`;
+  const iv = setInterval(() => {
+    left--;
+    if (left <= 0) {
+      clearInterval(iv);
+      btn.textContent = orig;
+      btn.disabled = false;
+    } else {
+      btn.textContent = `⏳ รออีก ${left} วินาที`;
+    }
+  }, 1000);
+}
+
+async function changeEmail() {
+  setMsg('emailMsg', 'กำลังเปลี่ยน...');
+
+  const { status, ok, data } = await post('/api/account/change-email', {
+    email: $('newEmail').value,
+  });
+
+  if (data.ok) {
+    setMsg('emailMsg', '✓ ' + (data.message || 'เปลี่ยนแล้ว'));
+    toast('📧 เปลี่ยนอีเมล');
+
+    // ★ อัปเดต UI โดยไม่ reload
+    if (data.email) {
+      // อัปเดตแถวอีเมลปัจจุบัน
+      const rows = document.querySelectorAll('#panel-email .buy-pay-row strong');
+      if (rows[0]) rows[0].textContent = data.email;
+      if (rows[1]) rows[1].innerHTML = '<span style="color:var(--accent);">⏳ ยังไม่ยืนยัน</span>';
+
+      // ล้างช่องกรอก
+      $('newEmail').value = '';
+
+      // ★ แสดงปุ่ม resend ถ้ายังไม่มี
+      ensureResendBox(data.email);
+    }
+
+    if (data.warning) setMsg('emailMsg', '⚠️ ' + data.warning, true);
+  } else {
+    setMsg('emailMsg', data.error || 'ล้มเหลว', true);
+  }
+}
+
+// ★ helper — สร้างกล่อง resend ถ้ายังไม่มี
+function ensureResendBox(email) {
+  const panel = $('panel-email');
+  if (!panel || panel.querySelector('#resendBtn')) return;
+
+  const note = document.createElement('div');
+  note.className = 'buy-note';
+  note.style.borderLeftColor = 'var(--accent)';
+  note.innerHTML = `
+    <strong>ยังไม่ยืนยันอีเมล</strong> — กดปุ่มด้านล่างเพื่อส่งลิงก์อีกครั้ง
+    <div style="margin-top:10px;">
+      <button class="buy-status-link" id="resendBtn" onclick="resendVerify()" type="button">
+        📮 ส่งลิงก์ยืนยันอีกครั้ง
+      </button>
+    </div>
+  `;
+  // แทรกหลัง buy-pay-box แรก
+  const firstBox = panel.querySelector('.buy-pay-box');
+  if (firstBox && firstBox.nextSibling) {
+    panel.insertBefore(note, firstBox.nextSibling);
+  } else {
+    panel.appendChild(note);
+  }
+}
+
+// ═══ Phone ═══
+let phoneToken = null;
+async function phoneStart() {
+  setMsg('phoneMsg', 'กำลังส่ง OTP...');
+  const { data } = await post('/api/account/phone/start', { phone: $('phoneInput').value });
+  if (data.ok) {
+    phoneToken = data.token;
+    $('otpBox').style.display = 'block';
+    setMsg('phoneMsg', '✓ ' + (data.message || 'ส่ง OTP แล้ว'));
+    toast('📱 ส่ง OTP');
+    if (data.dev_code) {
+      $('otpInput').value = data.dev_code;
+      setMsg('phoneMsg', '✓ DEV MODE — OTP = ' + data.dev_code);
+    }
+  } else {
+    setMsg('phoneMsg', data.error || 'ล้มเหลว', true);
+  }
+}
+
+async function phoneVerify() {
+  if (!phoneToken) return setMsg('otpMsg', 'ยังไม่ได้ส่ง OTP', true);
+  setMsg('otpMsg', 'กำลังตรวจ...');
+  const { data } = await post('/api/account/phone/verify', {
+    token: phoneToken,
+    code: $('otpInput').value,
+  });
+  if (data.ok) {
+    setMsg('otpMsg', '✓ ยืนยันสำเร็จ');
+    toast('✅ ยืนยันเบอร์');
+    setTimeout(() => location.reload(), 1200);
+  } else {
+    setMsg('otpMsg', data.error || 'ล้มเหลว', true);
+  }
+}
+
+async function phoneRemove() {
+  if (!confirm('ลบเบอร์ออกจากบัญชี?')) return;
+  const { data } = await post('/api/account/phone/remove');
+  if (data.ok) { toast('🗑 ลบเบอร์'); setTimeout(() => location.reload(), 800); }
+  else setMsg('phoneMsg', data.error || 'ล้มเหลว', true);
+}
+
+// ═══ Activity ═══
+async function loadActivity() {
+  const box = $('activityList');
+  box.innerHTML = '<div class="buy-empty">กำลังโหลด...</div>';
+  try {
+    const r = await fetch('/api/account/activity', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (!d.ok || !d.items?.length) {
+      box.innerHTML = '<div class="buy-empty">ไม่มีประวัติ</div>';
+      return;
+    }
+    box.innerHTML = d.items.map((a) => `
+      <div class="buy-history-item">
+        <div class="buy-history-main">
+          <span class="buy-history-pkg">${esc(a.action)}</span>
+          <span class="buy-history-price">${esc(a.date_text)}</span>
+        </div>
+        <div class="buy-history-meta">
+          <span>${esc(a.ip || '—')}</span>
+          <span>${esc(a.detail || '')}</span>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    box.innerHTML = '<div class="buy-empty" style="color:var(--bad);">โหลดไม่สำเร็จ</div>';
+  }
+}
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+// ═══ Delete ═══
+async function deleteAccount() {
+  if (!confirm('⚠️ ลบบัญชีถาวร?\nกู้คืนไม่ได้')) return;
+  if (!confirm('แน่ใจจริง ๆ?')) return;
+
+  setMsg('delMsg', 'กำลังลบ...');
+  const { data } = await post('/api/account/delete', {
+    password: $('delPw').value,
+    confirm: $('delConfirm').value,
+  });
+  if (data.ok) {
+    toast('บัญชีถูกลบ');
+    setTimeout(() => { window.location.href = data.redirect || '/login'; }, 1000);
+  } else {
+    setMsg('delMsg', data.error || 'ล้มเหลว', true);
+  }
+}
+</script>
+</body>
+</html>

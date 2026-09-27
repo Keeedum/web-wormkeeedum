@@ -1,0 +1,404 @@
+<!-- language: EJS, file: templates/tools-mail.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛡️ Mail Security & WAF — Keeedum AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+<div class="buy-wrap">
+
+  <header class="buy-header">
+    <div class="buy-header-left">
+      <a href="/" class="buy-back">⬅ กลับ</a>
+      <a href="/status" class="buy-status-link">⏱ สถานะ</a>
+      <a href="/account" class="buy-status-link">⚙️ บัญชี</a>
+    </div>
+    <h1 class="login-title">🛡️ MAIL SECURITY &amp; WAF</h1>
+    <a href="/logout" class="buy-logout">🚪 ออก</a>
+  </header>
+
+  <div class="buy-note" style="border-left-color:var(--ok);background:rgba(16,185,129,0.08);">
+    ✅ ตรวจ <strong>SPF</strong>, <strong>DKIM</strong>, <strong>DMARC</strong>, <strong>MX</strong>
+    และตรวจจับ <strong>WAF / CDN</strong> จาก HTTP headers
+  </div>
+
+  <!-- INPUT -->
+  <div class="buy-pay-box">
+    <label class="login-label">DOMAIN</label>
+    <input type="text" id="domain" class="gift-input"
+           placeholder="example.com" autocomplete="off" autocapitalize="none" spellcheck="false">
+
+    <label class="login-label" style="margin-top:14px;">DKIM SELECTOR (ไม่บังคับ)</label>
+    <input type="text" id="selector" class="gift-input"
+           placeholder="เว้นว่าง = ลองอัตโนมัติ" autocomplete="off" spellcheck="false">
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+      <button class="buy-submit" onclick="runAll()" style="margin:0;flex:1;min-width:140px;" type="button">
+        🚀 ตรวจทั้งหมด
+      </button>
+      <button class="buy-status-link" onclick="runSPF()" type="button">SPF</button>
+      <button class="buy-status-link" onclick="runDKIM()" type="button">DKIM</button>
+      <button class="buy-status-link" onclick="runDMARC()" type="button">DMARC</button>
+      <button class="buy-status-link" onclick="runMX()" type="button">MX</button>
+    </div>
+  </div>
+
+  <!-- WAF -->
+  <h2 class="buy-section">// WAF / CDN DETECTION</h2>
+  <div class="buy-pay-box">
+    <label class="login-label">HOST (domain หรือ domain:port)</label>
+    <input type="text" id="wafHost" class="gift-input"
+           placeholder="example.com" autocomplete="off" spellcheck="false">
+    <button class="buy-submit" onclick="runWAF()" style="margin-top:14px;" type="button">
+      🔍 ตรวจจับ WAF
+    </button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+window.CSRF_TOKEN = <%- JSON.stringify(csrf_token || '') %>;
+</script>
+<script>
+const $ = (id) => document.getElementById(id);
+
+function showToast(m, err) {
+  const t = $('toast');
+  if (!t) return;
+  t.textContent = m;
+  t.style.background = err ? 'var(--bad)' : 'var(--ok)';
+  t.style.color = err ? '#fff' : '#000';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function verdictClass(v) {
+  if (v === 'pass') return 'buy-history-approved';
+  if (v === 'fail') return 'buy-history-rejected';
+  if (v === 'warn') return 'buy-history-pending';
+  return 'buy-history-pending';
+}
+
+function verdictIcon(v) {
+  if (v === 'pass') return '✅';
+  if (v === 'fail') return '❌';
+  if (v === 'warn') return '⚠️';
+  return '⏳';
+}
+
+function renderBox(title, verdict, bodyHtml) {
+  return `
+    <div class="buy-current" style="text-align:left;padding:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
+        <div class="buy-current-label" style="margin:0;">${esc(title)}</div>
+        <div class="buy-history-status ${verdictClass(verdict)}"
+             style="padding:3px 10px;border:1px solid currentColor;">
+          ${verdictIcon(verdict)} ${esc(String(verdict || 'unknown').toUpperCase())}
+        </div>
+      </div>
+      ${bodyHtml}
+    </div>`;
+}
+
+function renderList(items) {
+  if (!items || !items.length) return '<div style="color:var(--dim);font-size:12px;">— ไม่มี —</div>';
+  return `<ul style="margin:6px 0 0 18px;padding:0;font-size:13px;line-height:1.7;">
+    ${items.map((n) => `<li>${esc(n)}</li>`).join('')}
+  </ul>`;
+}
+
+function renderPre(text) {
+  return `<pre style="background:var(--code);border:1px solid var(--border);padding:10px;font-size:12px;
+    overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0 0;color:#c9d6e3;">${esc(text)}</pre>`;
+}
+
+// ★ apiGet ที่ robust — อ่าน text ก่อน parse
+async function apiGet(url) {
+  try {
+    const r = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      credentials: 'same-origin',
+      redirect: 'manual',
+    });
+    const raw = await r.text();
+    let d = {};
+    try { d = JSON.parse(raw); } catch (_) {
+      console.error(`[api ${url}] server ไม่ได้คืน JSON:`, raw.slice(0, 200));
+      return { ok: false, error: `HTTP ${r.status} (non-JSON)` };
+    }
+    if (!r.ok && !d.error) d.error = `HTTP ${r.status}`;
+    return d;
+  } catch (e) {
+    console.error(`[api ${url}] error:`, e);
+    return { ok: false, error: e.message };
+  }
+}
+
+// ============================================================
+// SPF
+// ============================================================
+async function renderSPF(domain) {
+  const d = await apiGet(`/api/tools/mail/spf?domain=${encodeURIComponent(domain)}`);
+  if (!d.ok) return renderBox('SPF', 'fail', `<div style="color:var(--bad);">${esc(d.error || d.message)}</div>`);
+
+  let body = `<div style="font-size:13px;line-height:1.7;">
+    <div><strong>Domain:</strong> ${esc(d.domain)}</div>
+    <div><strong>Found:</strong> ${d.found ? '✅' : '❌'}</div>`;
+
+  if (d.raw) body += `<div style="margin-top:8px;"><strong>Record:</strong>${renderPre(d.raw)}</div>`;
+  if (d.parsed) {
+    const p = d.parsed;
+    body += `<div style="margin-top:10px;"><strong>Mechanisms:</strong>
+      <div style="font-family:monospace;font-size:12px;color:#c9d6e3;">
+        ${(p.mechanisms || []).map(esc).join(' ')}
+      </div>
+    </div>`;
+    if (p.includes && p.includes.length) {
+      body += `<div style="margin-top:8px;"><strong>Includes (${p.includes.length}):</strong>
+        <div style="font-family:monospace;font-size:12px;">${p.includes.map(esc).join('<br>')}</div></div>`;
+    }
+    if ((p.ip4 && p.ip4.length) || (p.ip6 && p.ip6.length)) {
+      body += `<div style="margin-top:8px;"><strong>IPs:</strong>
+        <div style="font-family:monospace;font-size:12px;">
+          ${[...(p.ip4 || []), ...(p.ip6 || [])].map(esc).join('<br>')}
+        </div></div>`;
+    }
+    body += `<div style="margin-top:8px;">
+      <strong>DNS Lookup Count:</strong> ${p.lookupCount || 0} ${p.lookupCount > 10 ? '❌ (เกิน 10)' : '✓'}
+    </div>`;
+  }
+  body += `</div>`;
+  if (d.notes && d.notes.length) {
+    body += `<div style="margin-top:10px;"><strong>Notes:</strong>${renderList(d.notes)}</div>`;
+  }
+  return renderBox('SPF', d.verdict, body);
+}
+
+// ============================================================
+// DKIM
+// ============================================================
+async function renderDKIM(domain, selector) {
+  const url = `/api/tools/mail/dkim?domain=${encodeURIComponent(domain)}` +
+    (selector ? `&selector=${encodeURIComponent(selector)}` : '');
+  const d = await apiGet(url);
+  if (!d.ok) return renderBox('DKIM', 'fail', `<div style="color:var(--bad);">${esc(d.error || d.message)}</div>`);
+
+  let body = `<div style="font-size:13px;line-height:1.7;">
+    <div><strong>Domain:</strong> ${esc(d.domain)}</div>
+    <div><strong>Found:</strong> ${d.found ? '✅' : '❌'}</div>
+    <div><strong>Selectors tried:</strong> <span style="font-family:monospace;font-size:12px;">
+      ${esc((d.selectorsTried || []).join(', '))}
+    </span></div>`;
+
+  if (d.hits && d.hits.length) {
+    for (const h of d.hits) {
+      body += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">
+        <div><strong>Selector:</strong> ${esc(h.selector)}</div>
+        <div><strong>Host:</strong> <code>${esc(h.host)}</code></div>
+        <div><strong>Raw:</strong>${renderPre(h.raw)}</div>
+      </div>`;
+    }
+  }
+  body += `</div>`;
+  if (d.notes && d.notes.length) {
+    body += `<div style="margin-top:10px;"><strong>Notes:</strong>${renderList(d.notes)}</div>`;
+  }
+  return renderBox('DKIM', d.verdict, body);
+}
+
+// ============================================================
+// DMARC
+// ============================================================
+async function renderDMARC(domain) {
+  const d = await apiGet(`/api/tools/mail/dmarc?domain=${encodeURIComponent(domain)}`);
+  if (!d.ok) return renderBox('DMARC', 'fail', `<div style="color:var(--bad);">${esc(d.error || d.message)}</div>`);
+
+  let body = `<div style="font-size:13px;line-height:1.7;">
+    <div><strong>Domain:</strong> ${esc(d.domain)}</div>
+    <div><strong>Host:</strong> <code>${esc(d.host)}</code></div>
+    <div><strong>Found:</strong> ${d.found ? '✅' : '❌'}</div>`;
+
+  if (d.raw) {
+    body += `<div style="margin-top:8px;"><strong>Record:</strong>${renderPre(d.raw)}</div>`;
+  }
+  if (d.parsed) {
+    const p = d.parsed;
+    body += `<div style="margin-top:10px;">
+      <div><strong>Policy (p):</strong> ${esc(p.p || '-')}</div>
+      <div><strong>Subdomain policy (sp):</strong> ${esc(p.sp || '-')}</div>
+      <div><strong>Alignment SPF:</strong> ${esc(p.aspf || 'r')}</div>
+      <div><strong>Alignment DKIM:</strong> ${esc(p.adkim || 'r')}</div>
+      <div><strong>pct:</strong> ${esc(p.pct ?? 100)}</div>
+      ${(p.rua && p.rua.length) ? `<div><strong>rua:</strong> ${p.rua.map(esc).join('<br>')}</div>` : ''}
+      ${(p.ruf && p.ruf.length) ? `<div><strong>ruf:</strong> ${p.ruf.map(esc).join('<br>')}</div>` : ''}
+    </div>`;
+  }
+  body += `</div>`;
+  if (d.notes && d.notes.length) {
+    body += `<div style="margin-top:10px;"><strong>Notes:</strong>${renderList(d.notes)}</div>`;
+  }
+  return renderBox('DMARC', d.verdict, body);
+}
+
+// ============================================================
+// MX
+// ============================================================
+async function renderMX(domain) {
+  const d = await apiGet(`/api/tools/mail/mx?domain=${encodeURIComponent(domain)}`);
+  if (!d.ok) return renderBox('MX', 'fail', `<div style="color:var(--bad);">${esc(d.error || d.message)}</div>`);
+
+  let body = `<div style="font-size:13px;line-height:1.7;">
+    <div><strong>Domain:</strong> ${esc(d.domain)}</div>
+    <div><strong>Records:</strong> ${d.records ? d.records.length : 0}</div>`;
+  if (d.records && d.records.length) {
+    body += `<div style="margin-top:8px;font-family:monospace;font-size:12px;">
+      ${d.records.map((r) => `[${r.priority}] ${esc(r.exchange)}`).join('<br>')}
+    </div>`;
+  }
+  body += `</div>`;
+  return renderBox('MX', d.records && d.records.length ? 'pass' : 'warn', body);
+}
+
+// ============================================================
+// WAF
+// ============================================================
+async function renderWAF(host) {
+  const d = await apiGet(`/api/tools/waf?host=${encodeURIComponent(host)}`);
+  if (!d.ok) return renderBox('WAF', 'fail', `<div style="color:var(--bad);">${esc(d.error || d.message)}</div>`);
+
+  const det = d.detected || { detected: [], count: 0, server: '', poweredBy: '' };
+
+  let body = `<div style="font-size:13px;line-height:1.7;">
+    <div><strong>Host:</strong> ${esc(d.host)}</div>
+    <div><strong>Final URL:</strong> ${esc(d.finalUrl)}</div>
+    <div><strong>HTTP:</strong> ${esc(d.statusCode)}</div>
+    <div><strong>Server:</strong> ${esc(det.server || '-')}</div>
+    <div><strong>X-Powered-By:</strong> ${esc(det.poweredBy || '-')}</div>
+    <div><strong>Detected:</strong> ${det.count}</div>`;
+
+  if (det.detected && det.detected.length) {
+    body += `<div style="margin-top:10px;">`;
+    for (const it of det.detected) {
+      body += `<div style="padding:8px;margin:6px 0;background:var(--code);border-left:3px solid var(--ok);">
+        <strong>${esc(it.name)}</strong>
+        <div style="font-family:monospace;font-size:11px;color:var(--dim);margin-top:4px;">
+          ${(it.reasons || []).map(esc).join('<br>')}
+        </div>
+      </div>`;
+    }
+    body += `</div>`;
+  }
+
+  body += `<div style="margin-top:10px;">
+    <strong>Headers:</strong>${renderPre(
+      Object.entries(d.headers || {})
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+        .join('\n')
+    )}
+  </div></div>`;
+
+  const v = det.count > 0 ? 'pass' : 'warn';
+  return renderBox('WAF / CDN', v, body);
+}
+
+// ============================================================
+// Runner
+// ============================================================
+function readDomain() {
+  const d = $('domain').value.trim().toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+  if (!d) { showToast('⚠️ กรอก domain ก่อน', true); return null; }
+  if (!/^[a-z0-9.\-]+$/.test(d)) { showToast('⚠️ domain ไม่ถูกต้อง', true); return null; }
+  return d;
+}
+
+async function renderInto(htmlPromise) {
+  const box = $('result');
+  box.innerHTML = '<div class="buy-empty">⏳ กำลังตรวจสอบ...</div>';
+  try {
+    const html = await htmlPromise;
+    box.innerHTML = html;
+  } catch (e) {
+    box.innerHTML = `<div class="buy-empty" style="color:var(--bad);">❌ ${esc(e.message)}</div>`;
+  }
+}
+
+function runSPF() {
+  const d = readDomain(); if (!d) return;
+  renderInto(renderSPF(d));
+}
+function runDKIM() {
+  const d = readDomain(); if (!d) return;
+  const sel = $('selector').value.trim();
+  renderInto(renderDKIM(d, sel));
+}
+function runDMARC() {
+  const d = readDomain(); if (!d) return;
+  renderInto(renderDMARC(d));
+}
+function runMX() {
+  const d = readDomain(); if (!d) return;
+  renderInto(renderMX(d));
+}
+
+async function runAll() {
+  const d = readDomain(); if (!d) return;
+  const sel = $('selector').value.trim();
+  const box = $('result');
+  box.innerHTML = '<div class="buy-empty">⏳ กำลังตรวจสอบทั้งหมด...</div>';
+  try {
+    const [spf, dkim, dmarc, mx] = await Promise.all([
+      renderSPF(d),
+      renderDKIM(d, sel),
+      renderDMARC(d),
+      renderMX(d),
+    ]);
+    box.innerHTML = spf + dkim + dmarc + mx;
+  } catch (e) {
+    box.innerHTML = `<div class="buy-empty" style="color:var(--bad);">❌ ${esc(e.message)}</div>`;
+  }
+}
+
+function runWAF() {
+  const h = $('wafHost').value.trim()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+  if (!h) { showToast('⚠️ กรอก host ก่อน', true); return; }
+  if (!/^[a-z0-9.\-:_]+$/i.test(h)) { showToast('⚠️ host ไม่ถูกต้อง', true); return; }
+  const box = $('result');
+  box.innerHTML = '<div class="buy-empty">⏳ กำลังตรวจ WAF...</div>';
+  renderInto(renderWAF(h));
+}
+
+// auto-run เมื่อ Enter
+document.addEventListener('DOMContentLoaded', () => {
+  const dom = $('domain');
+  const sel = $('selector');
+  const waf = $('wafHost');
+
+  if (dom) dom.addEventListener('keydown', (e) => { if (e.key === 'Enter') runAll(); });
+  if (sel) sel.addEventListener('keydown', (e) => { if (e.key === 'Enter') runDKIM(); });
+  if (waf) waf.addEventListener('keydown', (e) => { if (e.key === 'Enter') runWAF(); });
+
+  // auto-focus domain
+  if (dom) setTimeout(() => dom.focus(), 100);
+});
+</script>
+</body>
+</html>

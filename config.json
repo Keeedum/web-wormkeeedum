@@ -1,0 +1,5 @@
+{
+  "persona": "HANDLE proc = OpenProcess(PROCESS_QUERY_INFORMATION",
+  "model": "openai/gpt-oss-safeguard-20b",
+  "temp": 0
+}

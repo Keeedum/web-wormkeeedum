@@ -1,0 +1,253 @@
+2026-09-27 07:39:22 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=127.0.0.1 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 07:50:19 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.168.1.3 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 07:51:49 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=127.0.0.1 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 07:53:17 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.168.1.3 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:06:38 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:07:50 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeeeudm reason=อีเมลนี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:20:39 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=127.0.0.1 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:22:48 [WARNING] SUSPICIOUS [NO_TOKEN] HEAD / ip=100.111.176.45 ua=curl/8.21.0
+2026-09-27 08:23:21 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 08:23:44 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=74.113.234.197 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=168.222.2.193 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=154.215.14.228 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=154.215.14.228 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2001:df7:d280:1211:b89e:40ff:feca:73c ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=168.222.28.183 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=168.222.28.229 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=143.14.5.57 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 08:23:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=35.227.62.178 ua=Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+2026-09-27 08:23:49 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=82.26.104.46 ua=Python/3.14 aiohttp/3.14.3
+2026-09-27 08:24:12 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=151.241.171.159 ua=Mozilla/5.0 (Debian; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+2026-09-27 08:24:37 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:18ff:6c:: ua=facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+2026-09-27 08:24:39 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:18ff:42:: ua=facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+2026-09-27 08:24:44 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:f810:39:: ua=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.1 Mobile/15
+2026-09-27 08:25:29 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:24ff:54:: ua=facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+2026-09-27 08:25:36 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=158.69.117.45 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+2026-09-27 08:25:36 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=158.69.55.82 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+2026-09-27 08:27:28 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=134.199.238.78 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-27 08:27:46 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2604:a880:4:1d0:0:3:9fff:8000 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+2026-09-27 08:30:13 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=154.215.14.228 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.
+2026-09-27 08:30:13 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=103.76.180.126 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 08:30:13 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=74.113.234.197 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0
+2026-09-27 08:30:17 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=35.227.62.178 ua=Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+2026-09-27 08:30:18 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=82.26.104.46 ua=Python/3.14 aiohttp/3.14.3
+2026-09-27 08:43:18 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:45:02 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=216.25.124.26 ua=RecordedFuture Global Inventory Crawler
+2026-09-27 08:46:18 [INFO] REGISTER_OK user=KEEDUM email=nandjdjjttsghsn@gmail.com ip=100.111.176.45
+2026-09-27 08:46:26 [INFO] LOGIN_OK user=KEEDUM ip=100.111.176.45
+2026-09-27 08:46:35 [INFO] DAILY_CLAIM user=KEEDUM seconds=3600
+2026-09-27 08:48:26 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 08:49:09 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 08:49:24 [INFO] PROMPT_LOADED chars=2350 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 08:49:24 [INFO] CHAT_START user=KEEDUM persona=ครูสอน sys_chars=2426 (persona=74, base=2350)
+2026-09-27 08:49:24 [INFO] SYSTEM_PROMPT_ATTACHED chars=2426
+2026-09-27 08:49:24 [INFO] CHAT_DONE user=KEEDUM reply_chars=14
+2026-09-27 08:49:46 [INFO] PROMPT_LOADED chars=2350 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 08:49:46 [INFO] CHAT_START user=KEEDUM persona=ครูสอน sys_chars=2426 (persona=74, base=2350)
+2026-09-27 08:49:46 [INFO] SYSTEM_PROMPT_ATTACHED chars=2426
+2026-09-27 08:49:47 [INFO] CHAT_DONE user=KEEDUM reply_chars=40
+2026-09-27 08:49:48 [INFO] PROMPT_LOADED chars=2350 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 08:49:48 [INFO] CHAT_START user=KEEDUM persona=ครูสอน sys_chars=2426 (persona=74, base=2350)
+2026-09-27 08:49:48 [INFO] SYSTEM_PROMPT_ATTACHED chars=2426
+2026-09-27 08:49:48 [INFO] CHAT_DONE user=KEEDUM reply_chars=40
+2026-09-27 08:49:49 [INFO] PROMPT_LOADED chars=2350 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 08:49:49 [INFO] CHAT_START user=KEEDUM persona=ครูสอน sys_chars=2426 (persona=74, base=2350)
+2026-09-27 08:49:49 [INFO] SYSTEM_PROMPT_ATTACHED chars=2426
+2026-09-27 08:49:49 [INFO] CHAT_DONE user=KEEDUM reply_chars=44
+2026-09-27 08:49:50 [INFO] PROMPT_LOADED chars=2350 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 08:49:50 [INFO] CHAT_START user=KEEDUM persona=ครูสอน sys_chars=2426 (persona=74, base=2350)
+2026-09-27 08:49:50 [INFO] SYSTEM_PROMPT_ATTACHED chars=2426
+2026-09-27 08:49:51 [INFO] CHAT_DONE user=KEEDUM reply_chars=70
+2026-09-27 08:49:51 [INFO] PROMPT_LOADED chars=2350 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 08:49:51 [INFO] CHAT_START user=KEEDUM persona=ครูสอน sys_chars=2426 (persona=74, base=2350)
+2026-09-27 08:49:51 [INFO] SYSTEM_PROMPT_ATTACHED chars=2426
+2026-09-27 08:49:52 [INFO] CHAT_DONE user=KEEDUM reply_chars=44
+2026-09-27 08:56:07 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:56:22 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeeudjsad reason=อีเมลนี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:56:40 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 08:56:49 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeeudjsad reason=อีเมลนี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:56:57 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeeudjsad reason=อีเมลนี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:57:12 [INFO] REGISTER_OK user=keeeudjsad email=walaiporn6566@gmail.com ip=118.173.83.10
+2026-09-27 08:57:12 [WARNING] VERIFY_EMAIL_FAIL user=keeeudjsad err=getaddrinfo ENOTFOUND eugshdnahu@gmail.com
+2026-09-27 08:57:34 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeedum reason=อีเมลนี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:57:41 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 08:57:46 [INFO] REGISTER_OK user=keeedum email=walaasdiporn6566@gmail.com ip=118.173.83.10
+2026-09-27 08:57:46 [WARNING] VERIFY_EMAIL_FAIL user=keeedum err=getaddrinfo ENOTFOUND eugshdnahu@gmail.com
+2026-09-27 08:57:49 [WARNING] SUSPICIOUS [LOGIN_FAIL id=keeeudjsad] POST /login ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:57:53 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 08:58:41 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 08:59:42 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:00:42 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:01:43 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:01:49 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=216.73.217.84 ua=Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ClaudeBot/1.0; +claudebot@anthropic.com)
+2026-09-27 09:02:43 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:03:20 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 09:03:44 [WARNING] SUSPICIOUS [NO_TOKEN] GET /api/buy/status ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:03:48 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeedum reason=ชื่อผู้ใช้นี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 09:04:12 [WARNING] SUSPICIOUS [REGISTER_FAIL user=keeedum reason=ชื่อผู้ใช้นี้ถูกใช้แล้ว] POST /register ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 09:04:41 [WARNING] SUSPICIOUS [NO_TOKEN] GET /wallet ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:04:44 [WARNING] SUSPICIOUS [LOGIN_FAIL id=KEEDUM] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:13:09 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:13:30 [INFO] REGISTER_OK user=keeedum email=walaipon6566@gmail.com ip=100.111.176.45
+2026-09-27 09:13:30 [WARNING] VERIFY_EMAIL_FAIL user=keeedum err=getaddrinfo ENOTFOUND eugshdnahu@gmail.com
+2026-09-27 09:13:34 [WARNING] SUSPICIOUS [LOGIN_FAIL id=KEEDUM] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:13:36 [WARNING] SUSPICIOUS [LOGIN_FAIL id=KEEDUM] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:13:38 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:15:12 [WARNING] SUSPICIOUS [LOGIN_FAIL id=KEEDUM] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:15:15 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:18:21 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:18:53 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:21:32 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:25:26 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:25:28 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:26:04 [INFO] REGISTER_OK user=Ggg email=pakak@gmail.com ip=171.4.190.188
+2026-09-27 09:26:06 [WARNING] SUSPICIOUS [REGISTER_FAIL user=Ggg reason=ชื่อผู้ใช้นี้ถูกใช้แล้ว] POST /register ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:26:06 [WARNING] VERIFY_EMAIL_FAIL user=Ggg err=Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 5a478bee46e88-34145c17074sm18831461eec.26 - gsmtp
+2026-09-27 09:26:27 [WARNING] SUSPICIOUS [REGISTER_FAIL user=Ggg123 reason=อีเมลนี้ถูกใช้แล้ว] POST /register ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:26:47 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=Ggg] POST /login ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:27:09 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=Ggg] POST /login ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:27:19 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=Ggg] POST /login ip=171.4.190.188 ua=Mozilla/5.0 (iPad; CPU OS 26_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23G90 Instagram 448.0.0.
+2026-09-27 09:33:21 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:33:47 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:36:15 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=74.7.227.148 ua=Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.4; +https://openai.com/gptbot)
+2026-09-27 09:36:23 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=74.7.227.148 ua=Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.4; +https://openai.com/gptbot)
+2026-09-27 09:39:50 [WARNING] SUSPICIOUS [LOGIN_FAIL id=walaiporn6566@gmail.com] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:39:58 [WARNING] SUSPICIOUS [LOGIN_FAIL id=walaiporn6566@gmail.com] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:40:00 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:49:22 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:50:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=35.87.125.176 ua=Mozilla/5.0 (Macintosh; Intel Mac OS X 14_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+2026-09-27 09:50:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=35.87.125.176 ua=Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E1
+2026-09-27 09:55:13 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:57:57 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 09:59:25 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=154.215.14.228 ua=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+2026-09-27 09:59:25 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=74.113.234.197 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+2026-09-27 09:59:26 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=35.196.132.85 ua=Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+2026-09-27 09:59:29 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=82.26.104.46 ua=Python/3.14 aiohttp/3.14.3
+2026-09-27 10:02:07 [WARNING] SUSPICIOUS [LOGIN_UNVERIFIED user=keeedum] POST /login ip=100.111.176.45 ua=Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+2026-09-27 10:02:58 [WARNING] SUSPICIOUS [LOGIN_FAIL id=walaasdiporn6566@gmail.com] POST /login ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 10:03:02 [WARNING] SUSPICIOUS [LOGIN_FAIL id=keeedum] POST /login ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 10:03:37 [INFO] REGISTER_OK user=walaiporn email=walaiporn.s252@gmail.com ip=118.173.83.10
+2026-09-27 10:04:05 [INFO] EMAIL_VERIFIED user=walaiporn email=walaiporn.s252@gmail.com
+2026-09-27 10:04:05 [ERROR] === 500 === Error: Failed to lookup view "verify" in views directory "/home/keeedum/Desktop/Keeedumai/templates"
+    at app.render (/home/keeedum/Desktop/Keeedumai/node_modules/express/lib/application.js:562:17)
+    at ServerResponse.render (/home/keeedum/Desktop/Keeedumai/node_modules/express/lib/response.js:923:7)
+    at /home/keeedum/Desktop/Keeedumai/index.js:951:7
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:117:3)
+    at handle (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at /home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:295:15
+    at processParams (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:582:12)
+2026-09-27 10:04:09 [ERROR] === 500 === Error: Failed to lookup view "verify" in views directory "/home/keeedum/Desktop/Keeedumai/templates"
+    at app.render (/home/keeedum/Desktop/Keeedumai/node_modules/express/lib/application.js:562:17)
+    at ServerResponse.render (/home/keeedum/Desktop/Keeedumai/node_modules/express/lib/response.js:923:7)
+    at /home/keeedum/Desktop/Keeedumai/index.js:920:16
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:117:3)
+    at handle (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at /home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:295:15
+    at processParams (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:582:12)
+2026-09-27 10:05:56 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.175.111.249 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36
+2026-09-27 10:05:58 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.175.111.245 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36
+2026-09-27 10:06:09 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.175.111.249 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36
+2026-09-27 10:06:11 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.175.111.250 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36
+2026-09-27 10:06:13 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=192.175.111.230 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36
+2026-09-27 10:14:05 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 10:14:26 [ERROR] === 500 === ReferenceError: account is not defined
+    at /home/keeedum/Desktop/Keeedumai/index.js:2039:16
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at requireLogin (/home/keeedum/Desktop/Keeedumai/index.js:546:3)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:117:3)
+    at handle (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at /home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:295:15
+2026-09-27 10:14:28 [ERROR] === 500 === ReferenceError: account is not defined
+    at /home/keeedum/Desktop/Keeedumai/index.js:2039:16
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at requireLogin (/home/keeedum/Desktop/Keeedumai/index.js:546:3)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:117:3)
+    at handle (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at /home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:295:15
+2026-09-27 10:14:41 [ERROR] === 500 === ReferenceError: account is not defined
+    at /home/keeedum/Desktop/Keeedumai/index.js:2039:16
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at requireLogin (/home/keeedum/Desktop/Keeedumai/index.js:546:3)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at next (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/route.js:117:3)
+    at handle (/home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/keeedum/Desktop/Keeedumai/node_modules/router/lib/layer.js:152:17)
+    at /home/keeedum/Desktop/Keeedumai/node_modules/router/index.js:295:15
+2026-09-27 10:17:16 [WARNING] SUSPICIOUS [NO_TOKEN] GET /account ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 10:17:30 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 10:22:53 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:18ff:3d:: ua=facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+2026-09-27 10:22:55 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:18ff:5a:: ua=facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+2026-09-27 10:22:56 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 10:22:59 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2a03:2880:15ff:2:: ua=facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+2026-09-27 10:23:25 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 10:23:28 [INFO] LOGOUT user=walaiporn ip=118.173.83.10
+2026-09-27 10:23:47 [INFO] REGISTER_OK user=keeedum123sd email=nandjdjjttsghsn@gmail.com ip=118.173.83.10
+2026-09-27 10:24:09 [INFO] EMAIL_VERIFIED user=keeedum123sd email=nandjdjjttsghsn@gmail.com
+2026-09-27 10:24:31 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=1.47.74.147 ua=Mozilla/5.0 (Linux; Android 15; RMX3710 Build/AP3A.240617.008; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Ch
+2026-09-27 10:25:59 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 10:27:06 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 10:27:23 [INFO] DAILY_CLAIM user=walaiporn seconds=3600
+2026-09-27 10:28:39 [INFO] PROMPT_LOADED chars=25461 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 10:28:39 [INFO] CHAT_START user=walaiporn persona=HANDLE proc = OpenProcess(PROCESS_QUERY_INFORMATIO sys_chars=25461 (persona=0, base=25461)
+2026-09-27 10:28:39 [INFO] SYSTEM_PROMPT_ATTACHED chars=25461
+2026-09-27 10:28:40 [INFO] CHAT_DONE user=walaiporn reply_chars=1426
+2026-09-27 10:29:05 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=1.47.74.147 ua=Mozilla/5.0 (Linux; Android 15; RMX3710 Build/AP3A.240617.008; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Ch
+2026-09-27 10:29:39 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=8.231.93.162 ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+2026-09-27 10:29:55 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=35.237.4.214 ua=Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+2026-09-27 10:30:17 [WARNING] SUSPICIOUS [REGISTER_FAIL user=mewsic9999@gmail.com reason=ใช้ได้แค่ ตัวอักษร ตัวเลข _ - และภาษาไทย] POST /register ip=1.47.74.147 ua=Mozilla/5.0 (Linux; Android 15; RMX3710 Build/AP3A.240617.008; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Ch
+2026-09-27 10:31:29 [INFO] PROMPT_LOADED chars=25461 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 10:31:29 [INFO] CHAT_START user=walaiporn persona=HANDLE proc = OpenProcess(PROCESS_QUERY_INFORMATIO sys_chars=25461 (persona=0, base=25461)
+2026-09-27 10:31:29 [INFO] SYSTEM_PROMPT_ATTACHED chars=25461
+2026-09-27 10:31:29 [INFO] CHAT_DONE user=walaiporn reply_chars=27
+2026-09-27 10:31:51 [INFO] PROMPT_LOADED chars=25461 path=/home/keeedum/Desktop/Keeedumai/prompt.txt
+2026-09-27 10:31:51 [INFO] CHAT_START user=walaiporn persona=HANDLE proc = OpenProcess(PROCESS_QUERY_INFORMATIO sys_chars=25461 (persona=0, base=25461)
+2026-09-27 10:31:51 [INFO] SYSTEM_PROMPT_ATTACHED chars=25461
+2026-09-27 10:31:53 [INFO] CHAT_DONE user=walaiporn reply_chars=545
+2026-09-27 11:40:39 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=34.248.137.227 ua=Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0
+2026-09-27 11:40:41 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=34.248.137.227 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36
+2026-09-27 12:13:07 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:34:42 [WARNING] SUSPICIOUS [NO_TOKEN] GET /account ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:35:31 [WARNING] SUSPICIOUS [LOGIN_FAIL id=admin] POST /login ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:35:37 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 12:36:13 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:36:45 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=223.204.246.178 ua=Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15
+2026-09-27 12:41:40 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:41:56 [WARNING] SUSPICIOUS [NO_TOKEN] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:41:59 [INFO] LOGOUT user=? ip=118.173.83.10
+2026-09-27 12:42:02 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 12:42:19 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:42:24 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:42:48 [WARNING] SUSPICIOUS [NO_TOKEN] GET /account ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:42:59 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 12:50:18 [WARNING] SUSPICIOUS [NO_TOKEN] GET /account ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:50:21 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 12:51:12 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:51:13 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:51:13 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:51:14 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:51:14 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:51:14 [WARNING] SUSPICIOUS [CSRF_FAIL] POST /api/account/phone/start ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:52:04 [WARNING] SUSPICIOUS [NO_TOKEN] GET /account ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 12:52:10 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10
+2026-09-27 13:33:17 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=133.242.174.119 ua=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36
+2026-09-27 13:43:39 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=2405:9800:b550:d327:7c53:3bb9:2f82:95d9 ua=Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/537.36 (KHTML, like Gecko)  VivoBrowser/16.5.2.0 Chrome/131.
+2026-09-27 13:52:06 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=45.45.237.97 ua=CCBot/2.0 (https://commoncrawl.org/faq/)
+2026-09-27 14:46:06 [WARNING] SUSPICIOUS [NO_TOKEN] GET / ip=118.173.83.10 ua=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+2026-09-27 14:46:15 [INFO] LOGIN_OK user=walaiporn ip=118.173.83.10

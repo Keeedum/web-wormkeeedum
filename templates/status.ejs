@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⏱ สถานะการใช้งาน — Keeedum AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+
+  <div class="buy-wrap">
+
+    <header class="buy-header">
+      <a href="/" class="buy-back">⬅ กลับหน้าหลัก</a>
+      <h1 class="login-title">⏱ สถานะการใช้งาน</h1>
+      <a href="/buy" class="buy-status-link">🛒 ซื้อเพิ่ม</a>
+    </header>
+
+    <div class="buy-current buy-current-big">
+      <div class="buy-current-label">เวลาคงเหลือ</div>
+      <div class="buy-current-time" id="remain">กำลังโหลด...</div>
+      <div class="buy-current-exp" id="expiresAt"></div>
+      <div class="buy-countdown" id="countdown"></div>
+    </div>
+
+    <div class="buy-stats">
+      <div class="buy-stat">
+        <div class="buy-stat-label">💵 ยอดใช้จ่ายรวม</div>
+        <div class="buy-stat-value" id="totalPaid">-</div>
+      </div>
+      <div class="buy-stat">
+        <div class="buy-stat-label">🕐 หมดอายุเมื่อ</div>
+        <div class="buy-stat-value" id="expDate">-</div>
+      </div>
+    </div>
+
+    <h2 class="buy-section">📜 ประวัติการซื้อ</h2>
+    <div class="buy-history" id="historyList">กำลังโหลด...</div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  let remainSecs = 0;
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function loadStatus() {
+    try {
+      const r = await fetch('/api/buy/status');
+      if (r.status === 401) { location.href = '/login'; return; }
+      const d = await r.json();
+      if (!d.ok) return;
+
+      remainSecs = d.remaining || 0;
+      document.getElementById('remain').textContent = d.remaining_text || 'หมดอายุ';
+      document.getElementById('expiresAt').textContent = d.expires_text || '-';
+      document.getElementById('expDate').textContent = d.expires_text || '-';
+      document.getElementById('totalPaid').textContent = '฿' + (d.total_paid || 0);
+    } catch (e) {}
+  }
+
+  function updateCountdown() {
+    const el = document.getElementById('countdown');
+    if (remainSecs <= 0) {
+      el.textContent = '⚠️ หมดอายุแล้ว — กรุณาซื้อเพิ่ม';
+      return;
+    }
+    remainSecs -= 1;
+    const d = Math.floor(remainSecs / 86400);
+    const h = Math.floor((remainSecs % 86400) / 3600);
+    const m = Math.floor((remainSecs % 3600) / 60);
+    const s = remainSecs % 60;
+    el.textContent = `⏳ ${d}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  async function loadHistory() {
+    try {
+      const r = await fetch('/api/buy/history');
+      const d = await r.json();
+      const list = document.getElementById('historyList');
+      if (!d.items || !d.items.length) {
+        list.innerHTML = '<div class="buy-empty">ยังไม่มีประวัติ</div>';
+        return;
+      }
+      list.innerHTML = d.items.map(p => `
+        <div class="buy-history-item">
+          <div class="buy-history-main">
+            <span class="buy-history-pkg">${escapeHtml(p.pkg_name)}</span>
+            <span class="buy-history-price">฿${p.price}</span>
+          </div>
+          <div class="buy-history-meta">
+            <span>${p.date_text}</span>
+            <span class="buy-history-status buy-history-${p.status}">${p.status_text}</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {}
+  }
+
+  loadStatus();
+  loadHistory();
+  setInterval(loadStatus, 30000);
+  setInterval(updateCountdown, 1000);
+  </script>
+
+</body>
+</html>

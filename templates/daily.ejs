@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎁 รางวัลประจำวัน — Keeedum AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="buy-page">
+
+  <div class="buy-wrap">
+
+    <header class="buy-header">
+      <a href="/" class="buy-back">⬅ กลับหน้าหลัก</a>
+      <h1 class="login-title">🎁 รางวัลประจำวัน</h1>
+      <a href="/status" class="buy-status-link">⏱ สถานะ</a>
+    </header>
+
+    <!-- กล่องรับรางวัล -->
+    <div class="daily-box" id="dailyBox">
+      <div class="daily-gift" id="dailyIcon">🎁</div>
+      <div class="daily-title" id="dailyTitle">รางวัลประจำวัน</div>
+      <div class="daily-desc" id="dailyDesc">
+        รับฟรี <strong>+1 ชั่วโมง</strong> ทุกวัน ไม่มีจำกัด
+      </div>
+
+      <button class="daily-btn" id="claimBtn" onclick="claimDaily()">
+        🎁 กดรับเลย
+      </button>
+
+      <div class="daily-countdown" id="countdown" style="display:none;">
+        รีเฟรชใน <span id="cdText">23:59:59</span>
+      </div>
+    </div>
+
+    <!-- สถิติ -->
+    <div class="buy-stats" style="margin-top:24px;">
+      <div class="buy-stat">
+        <div class="buy-stat-label">📅 รับทั้งหมด</div>
+        <div class="buy-stat-value" id="totalClaims">0 ครั้ง</div>
+      </div>
+      <div class="buy-stat">
+        <div class="buy-stat-label">⏱ รวมเวลา</div>
+        <div class="buy-stat-value" id="totalSeconds">0 ชม.</div>
+      </div>
+    </div>
+
+    <!-- ประวัติ -->
+    <h2 class="buy-section">📜 ประวัติการรับ</h2>
+    <div class="buy-history" id="historyList">กำลังโหลด...</div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    window.CSRF_TOKEN = "<%= csrf_token %>";
+  </script>
+
+  <script>
+  let claimedToday = false;
+  let nextReset = 0;
+
+  function getCsrf() { return window.CSRF_TOKEN || ''; }
+
+  function showToast(msg, type = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = type === 'err' ? 'var(--bad)' : 'var(--ok)';
+    t.style.color = type === 'err' ? '#fff' : '#000';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function updateCountdown() {
+    const el = document.getElementById('cdText');
+    if (!el || nextReset <= 0) return;
+    nextReset -= 1;
+    const h = Math.floor(nextReset / 3600);
+    const m = Math.floor((nextReset % 3600) / 60);
+    const s = nextReset % 60;
+    el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  async function loadStatus() {
+    try {
+      const r = await fetch('/api/daily/status');
+      if (r.status === 401) { location.href = '/login'; return; }
+      const d = await r.json();
+      if (!d.ok) return;
+
+      claimedToday = d.claimed_today;
+      nextReset = d.next_reset || 0;
+
+      document.getElementById('totalClaims').textContent = (d.total_claims || 0) + ' ครั้ง';
+      document.getElementById('totalSeconds').textContent =
+        Math.floor((d.total_seconds || 0) / 3600) + ' ชม.';
+
+      if (claimedToday) {
+        document.getElementById('dailyIcon').textContent = '✅';
+        document.getElementById('dailyTitle').textContent = 'รับรางวัลแล้ววันนี้';
+        document.getElementById('dailyDesc').innerHTML =
+          'กลับมารับใหม่ <strong>พรุ่งนี้</strong> เวลา 00:00';
+        document.getElementById('claimBtn').disabled = true;
+        document.getElementById('claimBtn').textContent = '✅ รับแล้ว';
+        document.getElementById('dailyBox').classList.add('daily-claimed');
+        document.getElementById('countdown').style.display = 'block';
+      } else {
+        document.getElementById('dailyIcon').textContent = '🎁';
+        document.getElementById('dailyTitle').textContent = 'รางวัลประจำวัน';
+        document.getElementById('dailyDesc').innerHTML =
+          'รับฟรี <strong>+1 ชั่วโมง</strong> ทุกวัน ไม่มีจำกัด';
+        document.getElementById('claimBtn').disabled = false;
+        document.getElementById('claimBtn').textContent = '🎁 กดรับเลย';
+        document.getElementById('dailyBox').classList.remove('daily-claimed');
+        document.getElementById('countdown').style.display = 'none';
+      }
+      updateCountdown();
+    } catch (e) {}
+  }
+
+  async function claimDaily() {
+    const btn = document.getElementById('claimBtn');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังรับ...';
+
+    try {
+      const csrf = getCsrf();
+      const r = await fetch('/api/daily/claim', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-Token': csrf},
+        body: JSON.stringify({ _csrf: csrf }),
+      });
+      const d = await r.json();
+
+      if (d.ok) {
+        showToast('🎉 ' + d.message);
+        document.getElementById('dailyIcon').textContent = '🎉';
+        document.getElementById('dailyTitle').textContent = 'ยินดีด้วย!';
+        document.getElementById('dailyDesc').innerHTML =
+          '<strong>+1 ชั่วโมง</strong> ถูกเพิ่มแล้ว!';
+        document.getElementById('claimBtn').textContent = '✅ รับแล้ว';
+        document.getElementById('dailyBox').classList.add('daily-claimed');
+        document.getElementById('countdown').style.display = 'block';
+        setTimeout(() => loadStatus(), 1200);
+        setTimeout(() => loadHistory(), 1200);
+      } else {
+        showToast('❌ ' + (d.message || 'ล้มเหลว'), 'err');
+        btn.disabled = false;
+        btn.textContent = '🎁 กดรับเลย';
+      }
+    } catch (e) {
+      showToast('❌ เกิดข้อผิดพลาด', 'err');
+      btn.disabled = false;
+      btn.textContent = '🎁 กดรับเลย';
+    }
+  }
+
+  async function loadHistory() {
+    try {
+      const r = await fetch('/api/daily/history');
+      if (r.status === 401) return;
+      const d = await r.json();
+      const list = document.getElementById('historyList');
+      if (!d.items || !d.items.length) {
+        list.innerHTML = '<div class="buy-empty">ยังไม่มีประวัติ</div>';
+        return;
+      }
+      list.innerHTML = d.items.map(x => `
+        <div class="buy-history-item">
+          <div class="buy-history-main">
+            <span class="buy-history-pkg">🎁 รางวัลประจำวัน</span>
+            <span class="buy-history-price">+1 ชม.</span>
+          </div>
+          <div class="buy-history-meta">
+            <span>${escapeHtml(x.date_text)}</span>
+            <span class="buy-history-status buy-history-approved">✅ รับแล้ว</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {}
+  }
+
+  loadStatus();
+  loadHistory();
+  setInterval(updateCountdown, 1000);
+  setInterval(loadStatus, 60000);
+  </script>
+
+</body>
+</html>

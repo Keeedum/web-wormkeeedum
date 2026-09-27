@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 เข้าสู่ระบบ — Keeedum AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+
+    <div class="login-logo">🔐</div>
+    <div class="login-title">Keeedum AI</div>
+    <div class="login-sub">กรุณาเข้าสู่ระบบเพื่อใช้งาน</div>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="login-error">⚠ <%= error %></div>
+    <% } %>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="login-success" id="successBox"
+           style="<% if (typeof success_type !== 'undefined' && success_type === 'verified') { %>animation: pulse-ok 1.2s ease-in-out 2;<% } %>">
+        ✓ <%= success %>
+      </div>
+    <% } %>
+
+    <%# ★ ปุ่มขอลิงก์ยืนยันใหม่ — แสดงเมื่อ need_verify = true %>
+    <% if (typeof need_verify !== 'undefined' && need_verify) { %>
+      <div style="margin:14px 0;padding:14px;border:2px solid var(--accent);
+                  background:rgba(245,158,11,0.08);text-align:center;">
+        <div style="font-size:12px;color:var(--dim);margin-bottom:10px;
+                    text-transform:uppercase;letter-spacing:1px;font-weight:700;">
+          ยังไม่ได้รับอีเมล?
+        </div>
+        <a href="/verify-pending" class="buy-status-link"
+           style="display:inline-block;font-weight:900;">
+          📮 ขอลิงก์ยืนยันใหม่
+        </a>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/login" autocomplete="off" class="login-form">
+
+      <input type="hidden" name="_csrf" value="<%= csrf_token %>">
+
+      <label for="username" class="login-label">ชื่อผู้ใช้ หรือ อีเมล</label>
+      <input type="text" id="username" name="username"
+             placeholder="username หรือ you@example.com"
+             value="<%= (typeof verify_user !== 'undefined' && verify_user) ? verify_user : '' %>"
+             autofocus required maxlength="254" class="login-input">
+
+      <label for="password" class="login-label" style="margin-top:14px;">รหัสผ่าน</label>
+      <input type="password" id="password" name="password"
+             placeholder="••••••••" required maxlength="128" class="login-input">
+
+      <button type="submit" class="login-btn">เข้าสู่ระบบ ➤</button>
+
+    </form>
+
+    <% if (typeof allow_register !== 'undefined' && allow_register) { %>
+      <div class="login-footer" style="border-top:none; padding-top:8px;">
+        ยังไม่มีบัญชี? <a href="/register">สมัครสมาชิก</a>
+      </div>
+    <% } %>
+
+    <div class="login-footer">
+      🛡 ระบบป้องกัน: rate limit, CSRF, path guard
+    </div>
+
+  </div>
+
+  <!-- ★ animation สำหรับ success ที่เพิ่ง verified -->
+  <style>
+    @keyframes pulse-ok {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0); }
+      50%      { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(16,185,129,0.15); }
+    }
+  </style>
+
+  <script>
+    // ★ ถ้า verified=1 → focus ที่ช่อง username อัตโนมัติ
+    document.addEventListener('DOMContentLoaded', function () {
+      const url = new URL(window.location.href);
+      const u = document.getElementById('username');
+      if (url.searchParams.get('verified') === '1' && u) {
+        setTimeout(function () { u.focus(); }, 100);
+      }
+    });
+  </script>
+
+</body>
+</html>
